@@ -1,0 +1,43 @@
+.opcion {
+  background: #f8f9fa;
+  border: 2px solid #d8d8d8;
+  border-radius: 10px;
+  padding: 15px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.opcion:hover {
+  border-color: #2575fc;
+  background: #e3f2fd;
+}
+
+.opcion.seleccionada {
+  border-color: #2575fc;
+  background: #e3f2fd;
+  box-shadow: 0 0 0 3px rgba(37, 117, 252, 0.3);
+}
+
+/* Estilo para mensajes de retroalimentación */
+.retroalimentacion.correcta {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.retroalimentacion.incorrecta {
+  background: #ffebee;
+  color: #c62828;
+}
+
+.retroalimentacion.mostrar {
+  display: block;
+}
+
+
+.oculto{
+  display: none;
+}
+
+.mostrar{
+  display: fixed;
+}
