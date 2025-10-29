@@ -16,13 +16,13 @@ function nopciones() {
   let numeroOpciones = parseInt(document.getElementById("numeroOpciones").value)
   let cajas = '';
 
-  if (numeroOpciones < 4) {
+  if (numeroOpciones < 5) {
 
     for (let n = 1; n <= numeroOpciones; n++)
       cajas += `<div class="row mb-2 justify-content-center">
                   <div class="col-6">
                      <div class="form-floating mb-3">
-                      <input type="email" class="form-control" id="${n}" placeholder="name@example.com">
+                      <input type="text" class="form-control" id="${n}" placeholder="pregunta${n}">
                      <label for="floatingInput">Opcion ${n}</label>
                   </div>
                   </div>
@@ -56,8 +56,6 @@ function guardar() {
   pregunta_dates.retroalimentacion = document.getElementById("retroalimentacion").value;
   pregunta_dates.respuesta = (parseInt(document.getElementById("opcionCorrecta").value) - 1);
 
-  input_respuesta.max = pregunta_dates.opciones.length
-
   console.log("Se asigno la pregunta : " + pregunta_dates.pregunta)
   console.log("Se asigno la respuesta : " + pregunta_dates.respuesta)
 
@@ -66,6 +64,7 @@ function guardar() {
   }
 
 
+  ocultar_Card()
   pintar()
 
 
@@ -87,7 +86,7 @@ function pintar() {
 
   for (opcion of pregunta_dates.opciones) {
     salida.innerHTML += ` 
-    <button class="opcion col-2 text-center" id="${n}" value="${n}" onclick="selecionar(${n})" > ${opcion} </button>  `
+    <button class="opcion boton col-2 text-center" id="${n}" value="${n}" onclick="selecionar(${n})" > ${opcion} </button>  `
     console.log("Opciones : " + " Posicion " + `${n} ` + "Opcion :" + opcion)
 
     n++
@@ -113,6 +112,7 @@ function validar() {
 
 
 function selecionar(n) {
+  
   respuestaSeleccionada = n
   console.log("se seleciono la posicion : " + respuestaSeleccionada + " Como respuesta")
 
@@ -134,9 +134,36 @@ function mostrarToast(mensaje) {
 
 
 function max_options() {
-  let opciones = pregunta_dates.opciones
-  let input_respuesta = parseInt(document.getElementById("opcionCorrecta").value)
+  let opcionCorrecta = document.getElementById("opcionCorrecta").value;
+  let numeroOpciones = parseInt(document.getElementById("numeroOpciones").value)
 
-  alert(opciones.length)
+  if (opcionCorrecta > numeroOpciones) {
+    mostrarToast("La respuesta supera el numero de opciones")
+  } else {
+  }
 
 }
+
+
+
+
+function cerrar() {
+  let toast_card = document.getElementById("toastlive")
+  toast_card.classList.remove("show")
+  document.getElementById("opcionCorrecta").value = "";
+
+}
+
+
+
+function ocultar_Card() {
+
+  let card = document.getElementById("card_body");
+
+  card.classList.add("oculto")
+
+}
+
+
+
+

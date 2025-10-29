@@ -41,3 +41,32 @@
 .mostrar {
   display: fixed;
 }
+
+.centrar {
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+
+button:active {
+  background-color: rgb(112, 200, 235);
+  border: solid rgb(0, 129, 129) 2px;
+}
+
+.boton {
+  padding: 10px 20px;
+  border: none;
+  background-color: #e0e0e0;
+  color: #333;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+
+.boton.activo {
+  background-color: #007bff;
+  color: white;
+  box-shadow: 0 0 6px #007bff;
+}
