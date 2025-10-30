@@ -5,17 +5,15 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Document</title>
-  <link rel="stylesheet" href="style.css">
   <link href='https://cdn.boxicons.com/fonts/basic/boxicons.min.css' rel='stylesheet'>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
-    integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+  integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+  <link rel="stylesheet" href="style.css">
 </head>
 
 <body id="screen">
-
-
   <div class="row d-flex justify-content-center">
-    <div class="col-8">
+    <div class="col-12 col-md-10 col-lg-8">
       <div class="card mt-5">
         <div class="card-body" id="card_body">
           <h5 class="card-title">GENERAR PREGUNTA</h5>
@@ -27,57 +25,90 @@
             <label for="numeroOpciones" class="form-label">Numero de Opciones</label>
             <input type="number" id="numeroOpciones" oninput="nopciones()" class="form-control" aria-valuemax="">
           </div>
-          <div id="contenedorOpciones">
+          <div id="contenedorOpciones"></div>
 
-
-          </div>
           <div class="mb-3" id="contenedor">
             <label for="opcionCorrecta" class="form-label">No. Opcion Correcta</label>
             <input type="number" oninput="max_options()" class="form-control" id="opcionCorrecta">
           </div>
+
           <div class="mb-3">
             <label for="retroalimentacion" class="form-label">Retroalimentacion</label>
             <input type="text" class="form-control" id="retroalimentacion">
           </div>
+
           <div>
-            <button type="submit" class="btn btn-success" onclick="guardar()" id="guardar">Enviar</button>
+            <button type="submit" class="btn btn-success w-100" onclick="guardar()" id="guardar">Enviar</button>
           </div>
         </div>
       </div>
 
-      <div id="pregunta_pantalla" class="card mt-3 d-flex flex-column p-3 mt-5">
-
-      </div>
-
+      <div id="pregunta_pantalla" class="card mt-3 d-flex flex-column p-3 mt-5"></div>
     </div>
 
-    <div class="toast-container position-fixed bottom-0 start-50 translate-middle-x p-3 data-bs-autohide=" true"
+    <div class="toast-container position-fixed bottom-0 start-50 translate-middle-x p-3" data-bs-autohide="true"
       data-bs-delay="3000">
       <div class="toast" role="alert" aria-live="assertive" aria-atomic="true" id="toastlive">
         <div class="toast-header">
-          <i class='bxrd  bxs-message-bubble-reply' style='color:#8000ca'></i>
+          <i class='bxrd bxs-message-bubble-reply' style='color:#8000ca'></i>
           <strong class="me-auto">Mensaje</strong>
           <small class="text-body-secondary">Justo ahora</small>
-          <button type="button" class="btn-close" data-bs-dismiss="toast" onclick="cerrar()"
-            aria-label="Close"></button>
+          <button type="button" class="btn-close" data-bs-dismiss="toast" onclick="cerrar()" aria-label="Close"></button>
         </div>
-        <div class="toast-body" id="msg-card">
-
-        </div>
+        <div class="toast-body" id="msg-card"></div>
       </div>
     </div>
-
   </div>
-
-
-
-
-
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
     crossorigin="anonymous"></script>
   <script src="pregunta.js"></script>
-</body>
 
+
+
+
+  <!-- 
+  
+    INTEGRANTES :
+
+    ROSENDO DE CASTRO
+    MARIO CASTRO
+    KIARA CORENA
+    ANDREA HERNANDEZ
+  
+  -->
+
+
+
+
+
+
+
+
+
+
+
+
+  <!-- 
+  
+              (
+               )
+              (
+        /\  .-"""-.  /\
+       //\\/  ,,,  \//\\
+       |/\| ,;;;;;, |/\|
+       //\\\;-"""-;///\\
+      //  \/   .   \/  \\
+     (| ,-_| \ | / |_-, |)
+       //`__\.-.-./__`\\
+      // /.-(() ())-.\ \\
+     (\ |)   '---'   (| /)
+      ` (|           |) `
+        \)           (/
+        code by : viper
+  -->
+
+
+</body>
 </html>

@@ -1,38 +1,96 @@
+body {
+  background-color: #0d1117; /* Fondo oscuro */
+  color: #e6edf3; /* Texto claro */
+}
+
+/* ======== Tarjetas, contenedores y campos ======== */
+.card {
+  background-color: #161b22;
+  border: 1px solid #30363d;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
+}
+
+.card-body {
+  background-color: #161b22;
+  color: #e6edf3;
+}
+
+input.form-control, select.form-control, textarea.form-control {
+  background-color: #0d1117;
+  border: 1px solid #30363d;
+  color: #e6edf3;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+input.form-control:focus, select.form-control:focus, textarea.form-control:focus {
+  border-color: #2575fc;
+  box-shadow: 0 0 0 0.25rem rgba(37, 117, 252, 0.25);
+}
+
+/* Botones Bootstrap */
+.btn-success {
+  background-color: #198754;
+  border: none;
+  color: #fff;
+  font-weight: 600;
+  transition: background-color 0.3s, transform 0.1s;
+}
+
+.btn-success:hover {
+  background-color: #23a76d;
+  transform: scale(1.03);
+}
+
+/* Toasts */
+.toast {
+  background-color: #161b22;
+  color: #e6edf3;
+  border: 1px solid #30363d;
+}
+
+.toast-header {
+  background-color: #0d1117;
+  border-bottom: 1px solid #30363d;
+  color: #e6edf3;
+}
+
+/* ======== Tu CSS original con contraste dark ======== */
 .opcion {
-  background: #f8f9fa;
-  border: 2px solid #d8d8d8;
+  background: #161b22;
+  border: 2px solid #30363d;
   border-radius: 10px;
   padding: 15px;
   cursor: pointer;
   transition: all 0.2s ease;
+  color: #e6edf3;
 }
 
 .opcion:hover {
   border-color: #2575fc;
-  background: #e3f2fd;
+  background: #1f2937;
 }
 
 .opcion.seleccionada {
   border-color: #2575fc;
-  background: #e3f2fd;
+  background: #1e3a5f;
   box-shadow: 0 0 0 3px rgba(37, 117, 252, 0.3);
 }
 
 /* Estilo para mensajes de retroalimentación */
 .retroalimentacion.correcta {
-  background: #e8f5e9;
-  color: #2e7d32;
+  background: #1b3c1b;
+  color: #81c784;
 }
 
 .retroalimentacion.incorrecta {
-  background: #ffebee;
-  color: #c62828;
+  background: #3a1a1a;
+  color: #ef5350;
 }
 
 .retroalimentacion.mostrar {
   display: block;
 }
-
 
 .oculto {
   display: none;
@@ -48,22 +106,20 @@
   transform: translate(-50%, -50%);
 }
 
-
 button:active {
-  background-color: rgb(112, 200, 235);
-  border: solid rgb(0, 129, 129) 2px;
+  background-color: #0d6efd;
+  border: solid #2575fc 2px;
 }
 
 .boton {
   padding: 10px 20px;
   border: none;
-  background-color: #e0e0e0;
-  color: #333;
+  background-color: #21262d;
+  color: #e6edf3;
   border-radius: 6px;
   cursor: pointer;
   transition: 0.2s;
 }
-
 
 .boton.activo {
   background-color: #007bff;

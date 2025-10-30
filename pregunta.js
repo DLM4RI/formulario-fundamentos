@@ -3,7 +3,6 @@
 //       Asignacion de variables globales        //
 // ============================================ //
 
-document.getElementById("guardar").disabled = true
 
 
 let respuestaSeleccionada = 0;
@@ -71,8 +70,6 @@ function nopciones() {
     document.getElementById("contenedor").style.display = "block"
 
 
-  Validacion_Correcta()
-
 };
 
 
@@ -103,13 +100,7 @@ function guardar() {
 
 
 
-function Validacion_Correcta() {
 
-  let caja_correcta = document.getElementById("opcionCorrecta").value;
-  let caja_retro = document.getElementById("retroalimentacion").value;
-
- 
-}
 
 
 
@@ -144,7 +135,7 @@ function validar() {
   if (respuestaSeleccionada != pregunta_dates.respuesta) {
     mostrarToast(pregunta_dates.retroalimentacion);
   } else {
-    mostrarToast("✅ correcto, Felicidades");
+    mostrarToast("!correcto, Felicidades¡");
   }
 }
 
@@ -183,7 +174,7 @@ function max_options() {
 
 
 // ===================================================== //
-//    Funciones para el manejo del toast de boostrap     //
+//    Funciones para el manejo del toast O CARD FLOTANTE de boostrap     //
 // ===================================================== //
 
 
@@ -222,3 +213,12 @@ function ocultar_Card() {
   card.classList.add("oculto");
   
 }
+
+
+
+
+
+
+
+
+
