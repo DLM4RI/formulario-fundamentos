@@ -1,6 +1,15 @@
-var respuestaSeleccionada = 0;
+
+// ============================================= //
+//       Asignacion de variables globales        //
+// ============================================ //
+
+document.getElementById("guardar").disabled = true
+
+
+let respuestaSeleccionada = 0;
 let pantalla = document.getElementById("pregunta_pantalla")
 
+// OBJECT o Objeto que alamcena los datos de la pregunta
 
 let pregunta_dates = {
   pregunta: "",
@@ -9,15 +18,24 @@ let pregunta_dates = {
   retroalimentacion: ""
 }
 
+// se asigna o ocula el contenedor de "numero de opciones"  //
+
 document.getElementById("contenedor").style.display = "none"
 
 
+// funcion que crea el # de opciones para que el usuario establezca el "texto"
+
 function nopciones() {
+
   let numeroOpciones = parseInt(document.getElementById("numeroOpciones").value)
   let cajas = '';
 
+  // establececmos un valor maximo de opciones para que no se sature la memoria
   if (numeroOpciones < 5) {
 
+
+
+    // ciclo for que crea el # de opciones 
     for (let n = 1; n <= numeroOpciones; n++)
       cajas += `<div class="row mb-2 justify-content-center">
                   <div class="col-6">
@@ -27,13 +45,21 @@ function nopciones() {
                   </div>
                   </div>
               </div>`
-
+          
   } else {
+
+
+    // se le devuelve al usuariro un toast que diga que puso valores exagerados o incorrectos
+    // a su vez se eliminan las cajas creadas en dado caso si se crearon
+
+
     cajas = ''
-    alert("Error Muchas Opciones");
+    mostrarToast("Caracteres Invalidos o Demasiadas Opciones")
     document.getElementById("numeroOpciones").value = '';
-    document.getElementById("contenedorOpciones").innerHTML = ""
+    document.getElementById("contenedorOpciones").innerHTML = "";
     return
+
+
   }
 
 
@@ -43,6 +69,10 @@ function nopciones() {
     document.getElementById("contenedor").style.display = "none"
   else
     document.getElementById("contenedor").style.display = "block"
+
+
+  Validacion_Correcta()
+
 };
 
 
@@ -70,6 +100,16 @@ function guardar() {
 
 
 };
+
+
+
+function Validacion_Correcta() {
+
+  let caja_correcta = document.getElementById("opcionCorrecta").value;
+  let caja_retro = document.getElementById("retroalimentacion").value;
+
+ 
+}
 
 
 
@@ -120,6 +160,37 @@ function selecionar(n) {
 
 
 
+
+
+// Funcion para validar o si la respuesta correcta esta entre el numero de opciones //
+
+
+function max_options() {
+
+  let opcionCorrecta = document.getElementById("opcionCorrecta").value;
+  let numeroOpciones = parseInt(document.getElementById("numeroOpciones").value)
+
+  
+  if (opcionCorrecta > numeroOpciones) {
+    mostrarToast("La respuesta supera el numero de opciones")
+  } 
+
+
+}
+
+
+
+
+
+// ===================================================== //
+//    Funciones para el manejo del toast de boostrap     //
+// ===================================================== //
+
+
+
+
+// Funcion para pasar el mensaje al toast dependiendo de la accion
+
 function mostrarToast(mensaje) {
 
   let toast_card = document.getElementById("toastlive")
@@ -127,43 +198,27 @@ function mostrarToast(mensaje) {
   msg_card.innerText = mensaje
   toast_card.classList.add("show")
 
-
-
 }
 
 
 
-function max_options() {
-  let opcionCorrecta = document.getElementById("opcionCorrecta").value;
-  let numeroOpciones = parseInt(document.getElementById("numeroOpciones").value)
-
-  if (opcionCorrecta > numeroOpciones) {
-    mostrarToast("La respuesta supera el numero de opciones")
-  } else {
-  }
-
-}
-
-
+// Funcion para cerrar el toast o card
 
 
 function cerrar() {
-  let toast_card = document.getElementById("toastlive")
-  toast_card.classList.remove("show")
+  let toast_card = document.getElementById("toastlive");
+  toast_card.classList.remove("show");
   document.getElementById("opcionCorrecta").value = "";
 
 }
 
 
 
+// Funcion para tener mas organizado el enviar mensajes en el toast
+
 function ocultar_Card() {
 
   let card = document.getElementById("card_body");
-
-  card.classList.add("oculto")
-
+  card.classList.add("oculto");
+  
 }
-
-
-
-
