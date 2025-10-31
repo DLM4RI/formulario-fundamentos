@@ -131,6 +131,10 @@ function pintar() {
 };
 
 
+// FUNCIONES DE VALIDACION //
+//======================== //
+
+
 function validar() {
   if (respuestaSeleccionada != pregunta_dates.respuesta) {
     mostrarToast(pregunta_dates.retroalimentacion);
@@ -138,18 +142,6 @@ function validar() {
     mostrarToast("!correcto, Felicidades¡");
   }
 }
-
-
-
-
-function selecionar(n) {
-  
-  respuestaSeleccionada = n
-  console.log("se seleciono la posicion : " + respuestaSeleccionada + " Como respuesta")
-
-};
-
-
 
 
 
@@ -215,6 +207,18 @@ function ocultar_Card() {
 }
 
 
+
+
+// FUNCIONES VARIAS - ESTILOS Y DEMAS
+
+
+
+function selecionar(n) {
+  
+  respuestaSeleccionada = n
+  console.log("se seleciono la posicion : " + respuestaSeleccionada + " Como respuesta")
+
+};
 
 
 
