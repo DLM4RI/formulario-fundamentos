@@ -3,10 +3,10 @@
 //       Asignacion de variables globales        //
 // ============================================ //
 
-
+let pantalla = document.getElementById("pregunta_pantalla")
+pantalla.style.opacity = "0"
 
 let respuestaSeleccionada = 0;
-let pantalla = document.getElementById("pregunta_pantalla")
 
 // OBJECT o Objeto que alamcena los datos de la pregunta
 
@@ -105,7 +105,7 @@ function guardar() {
 
 
 function pintar() {
-
+  pantalla.style.opacity = "1"
 
   pantalla.innerHTML = `<h2 class="text-center" > ${pregunta_dates.pregunta} </h2> 
                         <div class="d-flex flex-row text-center p-2 m-5 justify-content-center gap-2" id="yuca">    
