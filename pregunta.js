@@ -231,6 +231,20 @@ function validar_pregunta() {
 }
 
 
+function actualizarBotones() {
+  const esPrimera = numero_de_pregunta === 1;
+  const esUltima = numero_de_pregunta === parseInt(n_preguntas.value);
+
+  document.getElementById("anterior").style.display = esPrimera ? "none" : "block";
+  document.getElementById("siguiente").style.display = esUltima ? "none" : "block";
+  document.getElementById("boton_quiz").style.display = esUltima ? "block" : "none";
+}
+
+
+
+
+
+
 
 function generar_preguntas (numero_de_pregunta) {
 
@@ -265,12 +279,22 @@ function generar_preguntas (numero_de_pregunta) {
   `
 
 
+  
+  const inputs = document.querySelectorAll("#preguntas-screen input");
+
+  inputs.forEach(i => i.addEventListener("input", validar_inputs));
+
+   validar_inputs();
+
 }
 
 
 
 
 function almacenar_preguntas() {
+
+  document.getElementById('card_body').style.display = "block"
+
   n_preguntas.disabled = true
   boton_generador_preguntas.disabled = true
   memoria_preguntas = [];
@@ -289,7 +313,8 @@ function almacenar_preguntas() {
   });
 
 
-    
+    actualizarBotones();
+
 
 
   }
@@ -299,54 +324,80 @@ function almacenar_preguntas() {
   
 function pintar_card_preguntas(boton) {
 
-  if (boton.id == "siguiente"){
+  if (boton.id === "siguiente") {
     guardar(numero_de_pregunta);
-    limpiar_inputs();
-    console.log("La pregunta" + numero_de_pregunta + " se guardo correctamente") 
-    console.log("Estas en la pregunta : " + numero_de_pregunta)
+    numero_de_pregunta++;
+    generar_preguntas(numero_de_pregunta);
+    
+  } else if (boton.id === "anterior") {
+    regresar();
+  }
+   actualizarBotones();
+}
 
-  } else if (boton.id == "anterior") {
 
-    console.log("Estas en la pregunta : " + numero_de_pregunta)  
-  } 
 
-};
+
+function regresar() {
+
+  if (numero_de_pregunta <= 1) {
+    mostrarToast("No hay preguntas anteriores");
+    return;
+  }
+
+  numero_de_pregunta--;
+
+  let datos = memoria_preguntas[numero_de_pregunta - 1];
+
+  generar_preguntas(numero_de_pregunta);
+
+  document.getElementById(`pregunta_${numero_de_pregunta}`).value = datos.pregunta;
+  document.getElementById("numeroOpciones").value = datos.opciones.length;
+
+  nopciones();
+
+  datos.opciones.forEach((op, i) => {
+    document.getElementById(`${i + 1}`).value = op;
+  });
+
+  document.getElementById("opcionCorrecta").value = datos.respuesta;
+  document.getElementById("retroalimentacion").value = datos.retroalimentacion;
+
+  console.log("⬅ Volviste a la pregunta:", numero_de_pregunta);
+}
+
+
 
 
 
 function guardar(ndp) {
-  
 
-  let numeroOpciones = parseInt(document.getElementById("numeroOpciones").value)
+  let numeroOpciones = parseInt(document.getElementById("numeroOpciones").value) || 0;
+  let opcionCorrecta = document.getElementById("opcionCorrecta");
 
-        
-  memoria_preguntas.push({
-          ...pregunta_dates,
-          numero_de_pregunta: ("pregunta_" + ndp), 
-          pregunta: `${document.getElementById(`pregunta_${ndp}`).value}`,
-          opciones: [],
-          respuesta: opcionCorrecta.value,
-          retroalimentacion: `${document.getElementById("retroalimentacion").value} `,
-          numero_de_pregunta: ndp,
-        });
-      
-  
-  
+  // Crea o actualiza la pregunta
+  memoria_preguntas[ndp - 1] = {
+    pregunta: document.getElementById(`pregunta_${ndp}`).value,
+    opciones: [],
+    respuesta: opcionCorrecta ? opcionCorrecta.value : "",
+    retroalimentacion: document.getElementById("retroalimentacion").value,
+    numero_de_pregunta: ndp,
+  };
+
+  // Guardar opciones
   for (let n = 1; n <= numeroOpciones; n++) {
-    memoria_preguntas[ndp-1].opciones.push(document.getElementById(`${n}`).value)
+    memoria_preguntas[ndp - 1].opciones.push(
+      document.getElementById(`${n}`).value
+    );
   }
-  
 
-  console.log("Pregunta " + ndp + " almacenada con los siguientes datos :")
-  console.log(memoria_preguntas)
-  console.log(pregunta_dates)
-  console.log(memoria_preguntas[ndp-1].opciones)
-  
-  actualizar(numero_de_pregunta)
-  
+  console.log("✅ Pregunta guardada:", memoria_preguntas[ndp - 1]);
+}
 
 
-};
+
+
+
 
 
 
@@ -361,6 +412,7 @@ function on_nopciones() {
             <input type="number" oninput="max_options()" class="form-control" id="opcionCorrecta">
             `
 }
+
 
 
 let btns_container = document.getElementById("btns_container");
@@ -393,7 +445,15 @@ function actualizar () {
 }
 
 
+//manejo de inputs  
+
 function limpiar_inputs() {
   document.querySelectorAll("#preguntas-screen input")
     .forEach(input => input.value = "");
+}
+
+function validar_inputs() {
+  const inputs = document.querySelectorAll("#preguntas-screen input");
+  const completos = [...inputs].every(i => i.value.trim() !== "");
+  document.getElementById("siguiente").disabled = !completos;
 }
