@@ -49,12 +49,15 @@ input.form-control:focus, select.form-control:focus, textarea.form-control:focus
 
 /* Toasts */
 .toast {
+
   background-color: #161b22;
   color: #e6edf3;
   border: 1px solid #30363d;
+
 }
 
 .toast-header {
+  
   background-color: #0d1117;
   border-bottom: 1px solid #30363d;
   color: #e6edf3;
@@ -146,3 +149,4 @@ span{
 #card_body{
   display: none;
 }
+
