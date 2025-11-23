@@ -9,4 +9,4 @@
 
 GRACIAS !
 
-## DURACION DE TRABAJO : 5 DIAS
+## DURACION DE TRABAJO : 2 semanas y 3 dias
