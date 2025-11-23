@@ -1,38 +1,48 @@
 
+
+
 // ============================================= //
 //       Asignacion de variables globales        //
 // ============================================ //
-
+let n_preguntas = document.getElementById("n_preguntas");
 let pantalla = document.getElementById("pregunta_pantalla")
-pantalla.style.opacity = "0"
-
 let respuestaSeleccionada = 0;
-
+let pantalla_preguntas = document.getElementById("preguntas-screen");
 // OBJECT o Objeto que alamcena los datos de la pregunta
-
 let pregunta_dates = {
   pregunta: "",
   opciones: [],
   respuesta: 0,
-  retroalimentacion: ""
-}
+  retroalimentacion: "",
+  numero_de_pregunta: null,
+};
 
-// se asigna o ocula el contenedor de "numero de opciones"  //
+// arreglo que almacena las preguntas creadas
 
-document.getElementById("contenedor").style.display = "none"
+let memoria_preguntas = [];
+
+let numero_de_pregunta = 1
+
+
+
+
+pantalla.style.opacity = "0"
 
 
 // funcion que crea el # de opciones para que el usuario establezca el "texto"
 
 function nopciones() {
-
   let numeroOpciones = parseInt(document.getElementById("numeroOpciones").value)
   let cajas = '';
+  let contenderoOpciones = document.getElementById("numeroOpciones");
+
+
+  // generamos el codigo y html para que aparezca la opcion de elegir la correcta : 
+
+
 
   // establececmos un valor maximo de opciones para que no se sature la memoria
   if (numeroOpciones < 5) {
-
-
 
     // ciclo for que crea el # de opciones 
     for (let n = 1; n <= numeroOpciones; n++)
@@ -44,104 +54,60 @@ function nopciones() {
                   </div>
                   </div>
               </div>`
-          
-  } else {
 
+  } else if (numeroOpciones == "" || numeroOpciones == 0 || isNaN(numeroOpciones) || numeroOpciones < 0) {
+
+    // si el usuario borra el numero de opciones se eliminan las cajas creadas
+    cajas = ''
+    document.getElementById("contenedorOpciones").innerHTML = "";
+    document.getElementById("contenedor").style.display = "none"
+    return
+
+
+  } else {
 
     // se le devuelve al usuariro un toast que diga que puso valores exagerados o incorrectos
     // a su vez se eliminan las cajas creadas en dado caso si se crearon
-
 
     cajas = ''
     mostrarToast("Caracteres Invalidos o Demasiadas Opciones")
     document.getElementById("numeroOpciones").value = '';
     document.getElementById("contenedorOpciones").innerHTML = "";
+    document.getElementById("contenedor").style.display = "none"
+    document.getElementById("numeroOpciones").disabled = false
+    document.getElementById("numeroOpciones").value = ''
+    contenderoOpciones.disabled = true
+
+    console.log(pregunta_dates)
+
     return
 
 
   }
-
+  
 
   document.getElementById("contenedorOpciones").innerHTML = cajas
 
-  if (cajas == '')
+  if (cajas == '') {
     document.getElementById("contenedor").style.display = "none"
-  else
-    document.getElementById("contenedor").style.display = "block"
-
-
-};
-
-
-
-
-function guardar() {
-
-
-  let numeroOpciones = parseInt(document.getElementById("numeroOpciones").value)
-  pregunta_dates.pregunta = document.getElementById("pregunta_input").value;
-  pregunta_dates.retroalimentacion = document.getElementById("retroalimentacion").value;
-  pregunta_dates.respuesta = (parseInt(document.getElementById("opcionCorrecta").value) - 1);
-
-  console.log("Se asigno la pregunta : " + pregunta_dates.pregunta)
-  console.log("Se asigno la respuesta : " + pregunta_dates.respuesta)
-
-  for (let n = 1; n <= numeroOpciones; n++) {
-    pregunta_dates.opciones.push(document.getElementById(`${n}`).value)
-  }
-
-
-  ocultar_Card()
-  pintar()
-
-
-
-};
-
-
-
-
-
-
-
-function pintar() {
-  pantalla.style.opacity = "1"
-
-  pantalla.innerHTML = `<h2 class="text-center" > ${pregunta_dates.pregunta} </h2> 
-                        <div class="d-flex flex-row text-center p-2 m-5 justify-content-center gap-2" id="yuca">    
-                        
-                        </div>`
-
-  let n = 0
-  let salida = document.getElementById("yuca");
-
-  for (opcion of pregunta_dates.opciones) {
-    salida.innerHTML += ` 
-    <button class="opcion boton col-2 text-center" id="${n}" value="${n}" onclick="selecionar(${n})" > ${opcion} </button>  `
-    console.log("Opciones : " + " Posicion " + `${n} ` + "Opcion :" + opcion)
-
-    n++
-
-  }
-
-
-  pantalla.innerHTML += `<input type="submit" class="btn btn-success" onclick="validar()" value="Responder">`
-
-
-};
-
-
-// FUNCIONES DE VALIDACION //
-//======================== //
-
-
-function validar() {
-  if (respuestaSeleccionada != pregunta_dates.respuesta) {
-    mostrarToast(pregunta_dates.retroalimentacion);
   } else {
-    mostrarToast("!correcto, Felicidades¡");
+    document.getElementById("contenedor").style.display = "block"
   }
-}
+
+  on_nopciones(numero_de_pregunta)
+
+
+
+
+};
+
+
+
+
+
+
+
+
 
 
 
@@ -150,13 +116,16 @@ function validar() {
 
 function max_options() {
 
-  let opcionCorrecta = document.getElementById("opcionCorrecta").value;
-  let numeroOpciones = parseInt(document.getElementById("numeroOpciones").value)
+  let opcionCorrecta = document.getElementById("opcionCorrecta");
+  let numeroOpciones = document.getElementById("numeroOpciones");
 
-  
-  if (opcionCorrecta > numeroOpciones) {
-    mostrarToast("La respuesta supera el numero de opciones")
-  } 
+
+  if (opcionCorrecta.value > numeroOpciones.value) {
+    document.getElementById("opcionCorrecta").disabled = true
+
+    opcionCorrecta.value = ""
+    mostrarToast("Superastes el limite de opciones")
+  }
 
 
 }
@@ -176,6 +145,7 @@ function max_options() {
 
 function mostrarToast(mensaje) {
 
+
   let toast_card = document.getElementById("toastlive")
   let msg_card = document.getElementById("msg-card")
   msg_card.innerText = mensaje
@@ -189,13 +159,16 @@ function mostrarToast(mensaje) {
 
 
 function cerrar() {
+  let inputs = document.querySelectorAll("input");
   let toast_card = document.getElementById("toastlive");
   toast_card.classList.remove("show");
-  document.getElementById("opcionCorrecta").value = "";
+  inputs.forEach(input => {
+    input.disabled = false;
+  });
+
+
 
 }
-
-
 
 // Funcion para tener mas organizado el enviar mensajes en el toast
 
@@ -203,7 +176,7 @@ function ocultar_Card() {
 
   let card = document.getElementById("card_body");
   card.classList.add("oculto");
-  
+
 }
 
 
@@ -214,7 +187,7 @@ function ocultar_Card() {
 
 
 function selecionar(n) {
-  
+
   respuestaSeleccionada = n
   console.log("se seleciono la posicion : " + respuestaSeleccionada + " Como respuesta")
 
@@ -226,3 +199,201 @@ function selecionar(n) {
 
 
 
+
+
+// ===================================================== //
+//    FUNCIONES PARA GENERAR VARIAS PREGUNTAS     //
+// ===================================================== //
+  
+let boton_generador_preguntas = document.getElementById("boton_generador_preguntas");
+
+function validar_pregunta() {
+
+    boton_generador_preguntas.disabled = true
+
+    if (n_preguntas.value > 20) {
+      mostrarToast("Numero maximo de preguntas es 20")
+      n_preguntas.value = ''
+      n_preguntas.disabled = true
+      return
+      // si el usuario borra el numero de preguntas se le deniega el acceso al boton, para que no genere errores
+    } else if (n_preguntas.value <= 0 || n_preguntas.value == "" || isNaN(n_preguntas.value)) {
+        
+          boton_generador_preguntas.disabled = true
+          //de lo contrario si el usuario si ingresa un numero valido entre 1 y 20 se le habilita el boton para generar las preguntas
+      } else {
+      n_preguntas.disabled = false
+      console.log("Numero de preguntas a generar : " + n_preguntas.value)
+      boton_generador_preguntas.disabled = false
+
+      return
+    };
+}
+
+
+
+function generar_preguntas (numero_de_pregunta) {
+
+
+
+  pantalla_preguntas.innerHTML = `
+
+  <div name="pregunta${numero_de_pregunta}">
+
+      <div class="mb-3" style="border-bottom: 2px solid #30363d; margin-bottom: 20px; padding-bottom: 20px;">
+        <h3 style="margin-bottom: 20px; margin-top: 20px;" > Pregunta ${numero_de_pregunta} </h3>
+        <label>Pregunta ? </label>
+        <input type="text" class="form-control" id="pregunta_${numero_de_pregunta}" placeholder="Ingrese la pregunta">
+      </div>
+      <div class="mb-3">
+        <label for="numeroOpciones" class="form-label">Numero de Opciones <span>(max 4)</span> </label>
+        <input type="number" id="numeroOpciones" oninput="nopciones()" class="form-control" aria-valuemax="">
+      </div>
+      <div id="contenedorOpciones"></div>
+            
+      <div class="mb-3" id="contenedor">
+                  
+      </div>
+
+      <div class="mb-3">
+        <label for="retroalimentacion" class="form-label">Retroalimentacion</label>
+        <input type="text" class="form-control" id="retroalimentacion">
+      </div>
+  </div>
+  
+  
+  `
+
+
+}
+
+
+
+
+function almacenar_preguntas() {
+  n_preguntas.disabled = true
+  boton_generador_preguntas.disabled = true
+  memoria_preguntas = [];
+
+  generar_preguntas(numero_de_pregunta) ;
+
+  
+  console.log("Estas en la pregunta : " + numero_de_pregunta)
+
+  document.getElementById("siguiente").addEventListener("click", () => {
+    pintar_card_preguntas(document.getElementById("siguiente"))
+  });
+
+  document.getElementById("anterior").addEventListener("click", () => {
+    pintar_card_preguntas(document.getElementById("anterior"))
+  });
+
+
+    
+
+
+  }
+
+
+
+  
+function pintar_card_preguntas(boton) {
+
+  if (boton.id == "siguiente"){
+    guardar(numero_de_pregunta);
+    limpiar_inputs();
+    console.log("La pregunta" + numero_de_pregunta + " se guardo correctamente") 
+    console.log("Estas en la pregunta : " + numero_de_pregunta)
+
+  } else if (boton.id == "anterior") {
+
+    console.log("Estas en la pregunta : " + numero_de_pregunta)  
+  } 
+
+};
+
+
+
+function guardar(ndp) {
+  
+
+  let numeroOpciones = parseInt(document.getElementById("numeroOpciones").value)
+
+        
+  memoria_preguntas.push({
+          ...pregunta_dates,
+          numero_de_pregunta: ("pregunta_" + ndp), 
+          pregunta: `${document.getElementById(`pregunta_${ndp}`).value}`,
+          opciones: [],
+          respuesta: opcionCorrecta.value,
+          retroalimentacion: `${document.getElementById("retroalimentacion").value} `,
+          numero_de_pregunta: ndp,
+        });
+      
+  
+  
+  for (let n = 1; n <= numeroOpciones; n++) {
+    memoria_preguntas[ndp-1].opciones.push(document.getElementById(`${n}`).value)
+  }
+  
+
+  console.log("Pregunta " + ndp + " almacenada con los siguientes datos :")
+  console.log(memoria_preguntas)
+  console.log(pregunta_dates)
+  console.log(memoria_preguntas[ndp-1].opciones)
+  
+  actualizar(numero_de_pregunta)
+  
+
+
+};
+
+
+
+function on_nopciones() {
+
+  let screen_option = document.getElementById("contenedor");
+
+  screen_option.style.display = "block"
+
+  screen_option.innerHTML = `
+            <label for="opcionCorrecta" class="form-label">No. Opcion Correcta</label>
+            <input type="number" oninput="max_options()" class="form-control" id="opcionCorrecta">
+            `
+}
+
+
+let btns_container = document.getElementById("btns_container");
+let btn_quiz = document.getElementById("boton_quiz"); 
+
+
+function actualizar () {
+
+  if (numero_de_pregunta == (n_preguntas.value-1)) {
+
+    numero_de_pregunta++
+    document.getElementById("siguiente").style.display = "none"
+    btn_quiz.style.display = "block"
+
+  } else {
+
+    if ( numero_de_pregunta >= parseInt(n_preguntas.value) ) {
+    console.log("Se han generado todas las preguntas")
+
+    } else {
+    numero_de_pregunta++
+    generar_preguntas(numero_de_pregunta)
+
+    }
+
+  }
+
+  
+
+}
+
+
+function limpiar_inputs() {
+  document.querySelectorAll("#preguntas-screen input")
+    .forEach(input => input.value = "");
+}

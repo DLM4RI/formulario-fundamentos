@@ -15,38 +15,63 @@
   <div class="row d-flex justify-content-center">
     <div class="col-12 col-md-10 col-lg-8">
       <div class="card mt-5">
-        <div class="card-body" id="card_body">
-          <h5 class="card-title">GENERAR PREGUNTA</h5>
-          <div class="mb-3">
-            <label class="form-label">Pregunta ?</label>
-            <input type="text" class="form-control" id="pregunta_input" placeholder="Ingrese la pregunta">
-          </div>
-          <div class="mb-3">
-            <label for="numeroOpciones" class="form-label">Numero de Opciones</label>
-            <input type="number" id="numeroOpciones" oninput="nopciones()" class="form-control" aria-valuemax="">
-          </div>
-          <div id="contenedorOpciones"></div>
-
-          <div class="mb-3" id="contenedor">
-            <label for="opcionCorrecta" class="form-label">No. Opcion Correcta</label>
-            <input type="number" oninput="max_options()" class="form-control" id="opcionCorrecta">
-          </div>
-
-          <div class="mb-3">
-            <label for="retroalimentacion" class="form-label">Retroalimentacion</label>
-            <input type="text" class="form-control" id="retroalimentacion">
-          </div>
-
-          <div>
-            <button type="submit" class="btn btn-success w-100" onclick="guardar()" id="guardar">Enviar</button>
-          </div>
+        <div>
+          <h2 class="card-header text-center" id="card_header" style="margin: 10px;"><b>Generador de Quizes</b></h3>
         </div>
+
+        <!-- Card donde se ingresa el numero de preguntas -->
+        <div class="card-body" id="card_body_numero">
+          <h5 class=""> Generador de Preguntas</h5>
+          <div class="mb-3">
+            <label for="n_preguntas" >Numero de Preguntas <span>(max 20)</span>   </label>
+            <input type="number" class="form-control" id="n_preguntas" placeholder="Ingrese # de preguntas" oninput="validar_pregunta()">
+          </div>
+            <button type="submit" class="btn btn-success w-100" onclick="almacenar_preguntas()" id="boton_generador_preguntas">Generar</button>
+        </div>
+
       </div>
 
-      <div id="pregunta_pantalla" class="card mt-3 d-flex flex-column p-3 mt-5"></div>
-    </div>
 
-    <div class="toast-container position-fixed bottom-0 start-50 translate-middle-x p-3" data-bs-autohide="true"
+      <!-- Card donde se genraran las preguntas -->
+
+      <div class="card-body" id="card_body">
+        <div style="text-align: center;"">
+            <h4 class="card-title"><b>Editor de Preguntas</b></h5>
+        </div>
+        
+          <div id="preguntas-screen">
+              
+
+            
+            
+          </div> 
+
+          <div id="btns_container">
+            <button type="submit" class="btn btn-warning w-30" onclick="pintar_card_preguntas('anterior')" id="anterior">Anterior</button>
+            <button type="submit" class="btn btn-primary w-30" onclick="pintar_card_preguntas('siguiente')" id="siguiente">siguiente</button>
+            <button type="submit" class="btn btn-danger w-30" id="boton_quiz" onclick="generar_quiz()">Generar Quiz</button>
+          </div>
+      </div>  
+    </div>
+  </div>
+
+
+
+  <!-- Lugar donde se generara el quiz -->
+
+  <div id="pregunta_pantalla" class="card mt-3 d-flex flex-column p-3 mt-5"></div>
+
+    
+  </div>
+
+
+
+
+
+  <!-- Toaster -->
+
+
+  <div class="toast-container position-fixed bottom-0 start-50 translate-middle-x p-3" data-bs-autohide="true"
       data-bs-delay="3000">
       <div class="toast" role="alert" aria-live="assertive" aria-atomic="true" id="toastlive">
         <div class="toast-header">
@@ -58,7 +83,7 @@
         <div class="toast-body" id="msg-card"></div>
       </div>
     </div>
-  </div>
+
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"

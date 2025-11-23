@@ -14,6 +14,9 @@ body {
 .card-body {
   background-color: #161b22;
   color: #e6edf3;
+  margin-top: 20px;
+  border-radius: 20px;
+
 }
 
 input.form-control, select.form-control, textarea.form-control {
@@ -129,3 +132,12 @@ button:active {
   box-shadow: 0 0 6px #007bff;
 }
 
+span{
+  color: #8b949e;
+  font-size: small;
+}
+
+
+#boton_quiz {
+  display: none;
+}
