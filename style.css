@@ -1,3 +1,9 @@
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
 body {
   background-color: #0d1117; /* Fondo oscuro */
   color: #e6edf3; /* Texto claro */
@@ -50,16 +56,16 @@ input.form-control:focus, select.form-control:focus, textarea.form-control:focus
 /* Toasts */
 .toast {
 
-  background-color: #161b22;
+  background-color: #c00000;
   color: #e6edf3;
-  border: 1px solid #30363d;
+  border: 1px solid #ff0000;
 
 }
 
 .toast-header {
   
-  background-color: #0d1117;
-  border-bottom: 1px solid #30363d;
+  background-color: #331313;
+  border-bottom: 1px solid #500505;
   color: #e6edf3;
 }
 
@@ -150,3 +156,14 @@ span{
   display: none;
 }
 
+
+#pregunta_pantalla{
+  display: none;
+  opacity: 0;
+}
+
+#toastlive{
+
+  transition: 100ms ease-in ;
+
+}

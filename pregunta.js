@@ -31,7 +31,7 @@ let numero_de_pregunta = 1
 // funcion que crea el # de opciones para que el usuario establezca el "texto"
 
 function nopciones() {
-  let numeroOpciones = parseInt(document.getElementById("numeroOpciones").value)
+  let numeroOpciones = document.getElementById("numeroOpciones")
   let cajas = '';
   let contenderoOpciones = document.getElementById("numeroOpciones");
 
@@ -41,10 +41,10 @@ function nopciones() {
 
 
   // establececmos un valor maximo de opciones para que no se sature la memoria
-  if (numeroOpciones < 5) {
-
+  if (parseInt(numeroOpciones.value) < 5) {
+    numeroOpciones.style.border = "2px solid green "
     // ciclo for que crea el # de opciones 
-    for (let n = 1; n <= numeroOpciones; n++)
+    for (let n = 1; n <= parseInt(numeroOpciones.value); n++)
       cajas += `<div class="row mb-2 justify-content-center">
                     <div class="col-6">
                       <div class="form-floating mb-3">
@@ -54,28 +54,18 @@ function nopciones() {
                     </div>
                 </div>`
 
-  } else if (numeroOpciones == "" || numeroOpciones == 0 || isNaN(numeroOpciones) || numeroOpciones < 0) {
-
-    // si el usuario borra el numero de opciones se eliminan las cajas creadas
-    cajas = ''
-    document.getElementById("contenedorOpciones").innerHTML = "";
-    document.getElementById("contenedor").style.display = "none"
-    return
-
-
   } else {
 
     // se le devuelve al usuariro un toast que diga que puso valores exagerados o incorrectos
     // a su vez se eliminan las cajas creadas en dado caso si se crearon
 
     cajas = ''
-    mostrarToast("Caracteres Invalidos o Demasiadas Opciones")
+    numeroOpciones.style.border = "2px solid red "
+    mostrarToast("Demasiadas Opciones o No hay opciones por mostrar")
     document.getElementById("numeroOpciones").value = '';
     document.getElementById("contenedorOpciones").innerHTML = "";
     document.getElementById("contenedor").style.display = "none"
-    document.getElementById("numeroOpciones").disabled = false
     document.getElementById("numeroOpciones").value = ''
-    contenderoOpciones.disabled = true
 
     console.log(pregunta_dates)
 
@@ -117,19 +107,18 @@ function max_options() {
   let opcionCorrecta = document.getElementById("opcionCorrecta");
   let numeroOpciones = document.getElementById("numeroOpciones");
 
-  if (!opcionCorrecta || !numeroOpciones) return;
-
-  if (opcionCorrecta.value > numeroOpciones.value) {
+  if (parseInt(opcionCorrecta.value) > parseInt(numeroOpciones.value)) {
     opcionCorrecta.style.border = "2px solid red";
     mostrarToast("Superaste el límite de opciones");
     setTimeout(() => {
       opcionCorrecta.value = "";
       opcionCorrecta.style.border = "";
     }, 100);
-  } else if (opcionCorrecta.value <= 0 && opcionCorrecta.value !== "") {
+  } else if (opcionCorrecta.value <= 0) {
     opcionCorrecta.style.border = "2px solid red";
-  } else {
-    opcionCorrecta.style.border = "";
+    mostrarToast("Inserte un numero valido")
+  } else if (opcionCorrecta.value !== "" || opcionCorrecta.value != 0) {
+    opcionCorrecta.style.border = "2px solid green";
   }
 }
 
@@ -145,6 +134,26 @@ function max_options() {
 // Funcion para pasar el mensaje al toast dependiendo de la accion
 
 function mostrarToast(mensaje) {
+
+  document.getElementById("salida_toaster").innerHTML =`
+  
+   <div class="toast-container position-fixed bottom-0 start-50 translate-middle-x p-3" data-bs-autohide="true"
+      data-bs-delay="3000">
+      <div class="toast" role="alert" aria-live="assertive" aria-atomic="true" id="toastlive">
+        <div class="toast-header">
+          <i class='bxrd bxs-message-bubble-reply' style='color:#8000ca'></i>
+          <strong class="me-auto">Mensaje</strong>
+          <small class="text-body-secondary">Justo ahora</small>
+          <button type="button" class="btn-close" data-bs-dismiss="toast" onclick="cerrar()" aria-label="Close"></button>
+        </div>
+        <div class="toast-body" id="msg-card"></div>
+      </div>
+    </div>
+  
+  
+  `
+
+
   let toast_card = document.getElementById("toastlive")
   let msg_card = document.getElementById("msg-card")
 
@@ -157,7 +166,7 @@ function mostrarToast(mensaje) {
   });
 
   toast_card.classList.remove("show")
-
+  
   setTimeout(() => {
     msg_card.innerText = mensaje
     toast_card.classList.add("show")
@@ -166,6 +175,7 @@ function mostrarToast(mensaje) {
   // Auto-ocultar después de 3 segundos
   setTimeout(() => {
     toast_card.classList.remove("show")
+    document.getElementById("salida_toaster").innerHTML = ""
 
     // Solo habilitar los inputs que NO estaban deshabilitados antes
     document.querySelectorAll("input").forEach(input => {
@@ -222,10 +232,11 @@ function validar_pregunta() {
 
   boton_generador_preguntas.disabled = true
 
+
   if (n_preguntas.value > 20) {
     mostrarToast("Numero maximo de preguntas es 20")
-    n_preguntas.value = ''
     n_preguntas.disabled = true
+    n_preguntas.value = ''
     return
     // si el usuario borra el numero de preguntas se le deniega el acceso al boton, para que no genere errores
   } else if (n_preguntas.value <= 0 || n_preguntas.value == "" || isNaN(n_preguntas.value)) {
@@ -354,35 +365,43 @@ function almacenar_preguntas() {
 function pintar_card_preguntas(boton) {
 
   if (boton.id === "siguiente") {
-    numero_de_pregunta++;
-    generar_preguntas(numero_de_pregunta);
-
-    // Cargar datos si ya existen
-    if (memoria_preguntas[numero_de_pregunta - 1]) {
-      let datos = memoria_preguntas[numero_de_pregunta - 1];
-
-      document.getElementById(`pregunta_${numero_de_pregunta}`).value = datos.pregunta;
-      document.getElementById("numeroOpciones").value = datos.opciones.length;
-
-      nopciones();
-
-      setTimeout(() => {
-        datos.opciones.forEach((op, i) => {
-          document.getElementById(`${i + 1}`).value = op;
-        });
-
-        // Mover estos DENTRO del setTimeout
-        document.getElementById("opcionCorrecta").value = datos.respuesta;
-        document.getElementById("retroalimentacion").value = datos.retroalimentacion;
-      }, 0);
-
-    }
-  }
-  else if (boton.id === "anterior") {
+    siguiente();
+  } else if (boton.id === "anterior") {
     regresar();
   }
   actualizarBotones();
 }
+
+
+// Funciones de botones del panel de ubicacion espacial
+
+function siguiente() {
+
+  numero_de_pregunta++;
+  generar_preguntas(numero_de_pregunta);
+
+  // Cargar datos si ya existen
+  if (memoria_preguntas[numero_de_pregunta - 1]) {
+    let datos = memoria_preguntas[numero_de_pregunta - 1];
+
+    document.getElementById(`pregunta_${numero_de_pregunta}`).value = datos.pregunta;
+    document.getElementById("numeroOpciones").value = datos.opciones.length;
+
+    nopciones();
+
+    setTimeout(() => {
+      datos.opciones.forEach((op, i) => {
+        document.getElementById(`${i + 1}`).value = op;
+      });
+
+      // Mover estos DENTRO del setTimeout
+      document.getElementById("opcionCorrecta").value = datos.respuesta;
+      document.getElementById("retroalimentacion").value = datos.retroalimentacion;
+    }, 0);
+
+  }
+}
+
 
 
 function regresar() {
@@ -502,8 +521,8 @@ function limpiar_inputs() {
 
 
 function generar_quiz() {
-  pantalla.style.display = "block";
-
+  pantalla.style.opacity = "1"
+  let letras = ["A","B","C","D"]
   let html = "";
 
   for (let x = 0; x < n_preguntas.value; x++) {
@@ -512,14 +531,14 @@ function generar_quiz() {
     html += `
       <div style="margin: 30px 0; padding: 20px; border-bottom: 1px solid #ddd;">
         
-        <h5>${datos.numero_de_pregunta}. ${datos.pregunta}</h5>
+        <h5> <b> ${datos.numero_de_pregunta}. ${datos.pregunta} </b> </h5>
         
         <div style="margin: 15px 0;">
-          ${datos.opciones.map((op, i) => `<p>${op}</p>`).join('')}
+          ${datos.opciones.map((op, i) => `<p> <b>${letras[i]}</b>.  ${op}</p>`).join('')}
         </div>
         
-        <p style="color: green; font-size: bold ;"><strong>Respuesta: ${datos.respuesta}</strong></p>
-        <p style="color: #e2e2e2ff;   background-color: rgba(8, 173, 8, 0.36);   padding: 10px;   border-radius: 10px;"> Retroalimentacion: <br>${datos.retroalimentacion}</p>
+        <p style="color: #e2e2e2ff;   background-color: rgba(8, 173, 8, 0.36);   padding: 10px;   border-radius: 10px;">Respuesta: <br>  <strong> ${letras[datos.respuesta-1]}. ${datos.opciones[datos.respuesta-1]} </strong> </p>
+        <p style="color: #e2e2e2ff ; background-color: rgba(80, 39, 177, 0.36); padding: 10px; border: 2px solid rgba(114, 72, 228, 0.81) "> <b> Retroalimentacion: </b> <br>${datos.retroalimentacion}</p>
         
       </div>
     `;

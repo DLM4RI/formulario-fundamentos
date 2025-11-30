@@ -11,7 +11,7 @@
   <link rel="stylesheet" href="style.css">
 </head>
 
-<body id="screen">
+<body id="screen" class="container col-12">
   <div class="row d-flex justify-content-center">
     <div class="col-12 col-md-10 col-lg-8">
       <div class="card mt-5">
@@ -26,7 +26,7 @@
             <label for="n_preguntas" >Numero de Preguntas <span>(max 20)</span>   </label>
             <input type="number" class="form-control" id="n_preguntas" placeholder="Ingrese # de preguntas" oninput="validar_pregunta()">
           </div>
-            <button type="submit" class="btn btn-success w-100" onclick="almacenar_preguntas()" id="boton_generador_preguntas">Generar</button>
+            <button type="submit" class="btn btn-success w-100" onclick="almacenar_preguntas()" id="boton_generador_preguntas" disabled>Generar</button>
         </div>
 
       </div>
@@ -59,7 +59,7 @@
 
   <!-- Lugar donde se generara el quiz -->
 
-  <div id="pregunta_pantalla" class="card mt-3 d-flex flex-column p-3 mt-5"></div>
+  <div id="pregunta_pantalla" class="container card mt-3 d-flex flex-column p-3 mt-5"></div>
 
     
   </div>
@@ -70,20 +70,10 @@
 
   <!-- Toaster -->
 
+<div id="salida_toaster"> 
 
-  <div class="toast-container position-fixed bottom-0 start-50 translate-middle-x p-3" data-bs-autohide="true"
-      data-bs-delay="3000">
-      <div class="toast" role="alert" aria-live="assertive" aria-atomic="true" id="toastlive">
-        <div class="toast-header">
-          <i class='bxrd bxs-message-bubble-reply' style='color:#8000ca'></i>
-          <strong class="me-auto">Mensaje</strong>
-          <small class="text-body-secondary">Justo ahora</small>
-          <button type="button" class="btn-close" data-bs-dismiss="toast" onclick="cerrar()" aria-label="Close"></button>
-        </div>
-        <div class="toast-body" id="msg-card"></div>
-      </div>
-    </div>
-
+</div>
+  
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
