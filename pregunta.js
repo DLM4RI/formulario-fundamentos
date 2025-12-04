@@ -166,7 +166,7 @@ function nopciones() {
     let ndp = numero_de_pregunta;
     let datosMemoria = memoria_preguntas[ndp - 1];
 
-    cajas += '<div class="row">'; 
+    cajas += '<div class="col">'; 
 
     if (val > 0) {
         for (let n = 1; n <= val; n++) {
@@ -178,7 +178,6 @@ function nopciones() {
                 valorActual = datosMemoria.opciones[n - 1];
             }
             
-            // col-md-6 reduce el ancho y col-12 asegura apilamiento vertical
             cajas += `
             <div class="mb-3 col-12"> 
                 <label>Opcion ${n}</label>
@@ -457,7 +456,7 @@ function crearModalEdicion(ndp) {
 
 function generarOpcionesModal(opcionesExistentes) {
     let contenedor = document.getElementById("modal_contenedorOpciones");
-    let html = '<div class="row">';
+    let html = '<div class="col">';
 
     opcionesExistentes.forEach((texto, i) => {
         html += `
@@ -475,7 +474,7 @@ function generarOpcionesModal(opcionesExistentes) {
 
 function generarOpcionesModalDinamico(numOpciones) {
     let contenedor = document.getElementById("modal_contenedorOpciones");
-    let html = '<div class="row">';
+    let html = '<div class="col">';
 
     // Guardar valores actuales antes de regenerar
     let valoresActuales = [];
@@ -616,3 +615,86 @@ function mostrarToast(mensaje) {
 
 
 /* Logic by viper */
+
+
+
+
+// === VALIDACIÓN GLOBAL PARA TODOS LOS INPUTS NUMÉRICOS === //
+document.addEventListener("input", (e) => {
+    const el = e.target;
+
+    // Solo afecta inputs con atributo max
+    if (el.tagName === "INPUT" && el.hasAttribute("max")) {
+        const max = Number(el.getAttribute("max"));
+        const value = Number(el.value);
+
+        if (value > max) {
+            // Muestra el toast (cámbialo si usas otro)
+            if (window.showToast) {
+                showToast(`El valor máximo permitido es ${max}`, "error");
+            } else {
+                alert(`El valor máximo permitido es ${max}`);
+            }
+
+            // BORRAR input al pasar el máximo
+            el.value = "";
+        }
+    }
+});
+
+
+// === FORZAR QUE TODOS LOS INPUTS DE OPCIONES COMPARTAN ESTILO === //
+function aplicarEstiloOpciones() {
+    const optionInputs = document.querySelectorAll(".option-input");
+
+    optionInputs.forEach(input => {
+        input.classList.add(
+            "w-full",
+            "bg-[#0f111a]",
+            "text-white",
+            "p-3",
+            "rounded-lg",
+            "border",
+            "border-[#2c3040]",
+            "focus:border-blue-500",
+            "focus:outline-none",
+            "transition"
+        );
+    });
+}
+
+// Ejecutar estilo al cargar
+aplicarEstiloOpciones();
+
+// Ejecutar estilo cada vez que se generen nuevas opciones
+const observer = new MutationObserver(() => {
+    aplicarEstiloOpciones();
+});
+observer.observe(document.body, { childList: true, subtree: true });
+
+
+// === VALIDACIÓN TAMBIÉN PARA INPUTS DE EDICIÓN === //
+function agregarValidacionEdicion() {
+    const editInputs = document.querySelectorAll(".edit-input");
+
+    editInputs.forEach(el => {
+        el.addEventListener("input", () => {
+            if (el.hasAttribute("max")) {
+                const max = Number(el.getAttribute("max"));
+                const val = Number(el.value);
+
+                if (val > max) {
+                    showToast(`Máximo permitido: ${max}`, "error");
+                    el.value = "";
+                }
+            }
+        });
+    });
+}
+
+agregarValidacionEdicion();
+
+const observerEdit = new MutationObserver(() => {
+    agregarValidacionEdicion();
+});
+observerEdit.observe(document.body, { childList: true, subtree: true });
