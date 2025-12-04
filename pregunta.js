@@ -1,556 +1,618 @@
-
-
-
-// ============================================= //
-//       Asignacion de variables globales        //
-// ============================================ //
+/* Logic by viper */
+/* ============================================= */
+/* Asignacion de variables globales        */
+/* ============================================ */
 let n_preguntas = document.getElementById("n_preguntas");
-let pantalla = document.getElementById("pregunta_pantalla")
-let respuestaSeleccionada = 0;
+let pantalla = document.getElementById("pregunta_pantalla");
 let pantalla_preguntas = document.getElementById("preguntas-screen");
-// OBJECT o Objeto que alamcena los datos de la pregunta
-let pregunta_dates = {
-  pregunta: "",
-  opciones: [],
-  respuesta: 0,
-  retroalimentacion: "",
-  numero_de_pregunta: null,
-};
-
-// arreglo que almacena las preguntas creadas
+let contenedor_mini_cards = document.getElementById("contenedor_mini_cards");
 
 let memoria_preguntas = [];
-
-let numero_de_pregunta = 1
-
-
-
-
-
-
-// funcion que crea el # de opciones para que el usuario establezca el "texto"
-
-function nopciones() {
-  let numeroOpciones = document.getElementById("numeroOpciones")
-  let cajas = '';
-  let contenderoOpciones = document.getElementById("numeroOpciones");
-
-
-  // generamos el codigo y html para que aparezca la opcion de elegir la correcta : 
-
-
-
-  // establececmos un valor maximo de opciones para que no se sature la memoria
-  if (parseInt(numeroOpciones.value) < 5) {
-    numeroOpciones.style.border = "2px solid green "
-    // ciclo for que crea el # de opciones 
-    for (let n = 1; n <= parseInt(numeroOpciones.value); n++)
-      cajas += `<div class="row mb-2 justify-content-center">
-                    <div class="col-6">
-                      <div class="form-floating mb-3">
-                        <input type="text" class="form-control" id="${n}" placeholder="pregunta${n}">
-                      <label for="floatingInput">Opcion ${n}</label>
-                    </div>
-                    </div>
-                </div>`
-
-  } else {
-
-    // se le devuelve al usuariro un toast que diga que puso valores exagerados o incorrectos
-    // a su vez se eliminan las cajas creadas en dado caso si se crearon
-
-    cajas = ''
-    numeroOpciones.style.border = "2px solid red "
-    mostrarToast("Demasiadas Opciones o No hay opciones por mostrar")
-    document.getElementById("numeroOpciones").value = '';
-    document.getElementById("contenedorOpciones").innerHTML = "";
-    document.getElementById("contenedor").style.display = "none"
-    document.getElementById("numeroOpciones").value = ''
-
-    console.log(pregunta_dates)
-
-    return
-
-
-  }
-
-
-  document.getElementById("contenedorOpciones").innerHTML = cajas
-
-  if (cajas == '') {
-    document.getElementById("contenedor").style.display = "none"
-  } else {
-    document.getElementById("contenedor").style.display = "block"
-  }
-
-  on_nopciones(numero_de_pregunta)
-
-
-
-
-};
-
-
-
-
-
-
-
-
-
-
-
-// Funcion para validar o si la respuesta correcta esta entre el numero de opciones //
-
-
-function max_options() {
-  let opcionCorrecta = document.getElementById("opcionCorrecta");
-  let numeroOpciones = document.getElementById("numeroOpciones");
-
-  if (parseInt(opcionCorrecta.value) > parseInt(numeroOpciones.value)) {
-    opcionCorrecta.style.border = "2px solid red";
-    mostrarToast("Superaste el límite de opciones");
-    setTimeout(() => {
-      opcionCorrecta.value = "";
-      opcionCorrecta.style.border = "";
-    }, 100);
-  } else if (opcionCorrecta.value <= 0) {
-    opcionCorrecta.style.border = "2px solid red";
-    mostrarToast("Inserte un numero valido")
-  } else if (opcionCorrecta.value !== "" || opcionCorrecta.value != 0) {
-    opcionCorrecta.style.border = "2px solid green";
-  }
-}
-
-
-
-// ===================================================== //
-//    Funciones para el manejo del toast O CARD FLOTANTE de boostrap     //
-// ===================================================== //
-
-
-
-
-// Funcion para pasar el mensaje al toast dependiendo de la accion
-
-function mostrarToast(mensaje) {
-
-  document.getElementById("salida_toaster").innerHTML =`
-  
-   <div class="toast-container position-fixed bottom-0 start-50 translate-middle-x p-3" data-bs-autohide="true"
-      data-bs-delay="3000">
-      <div class="toast" role="alert" aria-live="assertive" aria-atomic="true" id="toastlive">
-        <div class="toast-header">
-          <i class='bxrd bxs-message-bubble-reply' style='color:#8000ca'></i>
-          <strong class="me-auto">Mensaje</strong>
-          <small class="text-body-secondary">Justo ahora</small>
-          <button type="button" class="btn-close" data-bs-dismiss="toast" onclick="cerrar()" aria-label="Close"></button>
-        </div>
-        <div class="toast-body" id="msg-card"></div>
-      </div>
-    </div>
-  
-  
-  `
-
-
-  let toast_card = document.getElementById("toastlive")
-  let msg_card = document.getElementById("msg-card")
-
-  // Guardar qué inputs estaban deshabilitados ANTES del toast
-  let inputsDeshabilitados = [];
-  document.querySelectorAll("input").forEach(input => {
-    if (input.disabled) {
-      inputsDeshabilitados.push(input);
-    }
-  });
-
-  toast_card.classList.remove("show")
-  
-  setTimeout(() => {
-    msg_card.innerText = mensaje
-    toast_card.classList.add("show")
-  }, 10);
-
-  // Auto-ocultar después de 3 segundos
-  setTimeout(() => {
-    toast_card.classList.remove("show")
-    document.getElementById("salida_toaster").innerHTML = ""
-
-    // Solo habilitar los inputs que NO estaban deshabilitados antes
-    document.querySelectorAll("input").forEach(input => {
-      if (!inputsDeshabilitados.includes(input)) {
-        input.disabled = false;
-      }
-    });
-  }, 3000);
-}
-
-
-// Funcion para cerrar el toast o card
-
-
-function cerrar() {
-  let toast_card = document.getElementById("toastlive");
-  toast_card.classList.remove("show");
-
-  // Habilitar inputs cuando se cierra manualmente
-  let inputs = document.querySelectorAll("input");
-  inputs.forEach(input => {
-    input.disabled = false;
-  });
-}
-
-
-
-// FUNCIONES VARIAS - ESTILOS Y DEMAS
-
-
-
-function selecionar(n) {
-
-  respuestaSeleccionada = n
-  console.log("se seleciono la posicion : " + respuestaSeleccionada + " Como respuesta")
-
-};
-
-
-
-
-
-
-
-
-
-// ===================================================== //
-//    FUNCIONES PARA GENERAR VARIAS PREGUNTAS     //
-// ===================================================== //
-
-let boton_generador_preguntas = document.getElementById("boton_generador_preguntas");
-
+let numero_de_pregunta = 1;
+let modo_edicion_final = false; // Bandera para saber si ya terminamos la carga inicial
+let cargando_pantalla = false;
+
+/* ============================================= */
+/* Funciones de Inicio y Validación        */
+/* ============================================ */
+/* Logic by viper */
 function validar_pregunta() {
+  let btn = document.getElementById("boton_generador_preguntas");
+  let val = parseInt(n_preguntas.value);
 
-  boton_generador_preguntas.disabled = true
-
-
-  if (n_preguntas.value > 20) {
-    mostrarToast("Numero maximo de preguntas es 20")
-    n_preguntas.disabled = true
-    n_preguntas.value = ''
-    return
-    // si el usuario borra el numero de preguntas se le deniega el acceso al boton, para que no genere errores
-  } else if (n_preguntas.value <= 0 || n_preguntas.value == "" || isNaN(n_preguntas.value)) {
-
-    boton_generador_preguntas.disabled = true
-    //de lo contrario si el usuario si ingresa un numero valido entre 1 y 20 se le habilita el boton para generar las preguntas
+  if (val > 20) {
+    mostrarToast("Maximo 20 preguntas");
+    n_preguntas.value = 20;
+  } else if (val > 0) {
+    btn.disabled = false;
   } else {
-    n_preguntas.disabled = false
-    console.log("Numero de preguntas a generar : " + n_preguntas.value)
-    boton_generador_preguntas.disabled = false
-
-    return
-  };
-}
-
-
-function actualizarBotones() {
-  const esPrimera = numero_de_pregunta === 1;
-  const esUltima = numero_de_pregunta === parseInt(n_preguntas.value);
-
-  document.getElementById("anterior").style.display = esPrimera ? "none" : "block";
-  document.getElementById("siguiente").style.display = esUltima ? "none" : "block";
-  document.getElementById("boton_quiz").style.display = esUltima ? "block" : "none";
-}
-
-
-
-
-
-
-
-function generar_preguntas(numero_de_pregunta) {
-
-
-
-  pantalla_preguntas.innerHTML = `
-
-    <div name="pregunta${numero_de_pregunta}">
-
-        <div class="mb-3" style="border-bottom: 2px solid #30363d; margin-bottom: 20px; padding-bottom: 20px;">
-          <h3 style="margin-bottom: 20px; margin-top: 20px;" > Pregunta ${numero_de_pregunta} </h3>
-          <label>Pregunta ? </label>
-          <input type="text" class="form-control" id="pregunta_${numero_de_pregunta}" placeholder="Ingrese la pregunta">
-        </div>
-        <div class="mb-3">
-          <label for="numeroOpciones" class="form-label">Numero de Opciones <span>(max 4)</span> </label>
-          <input type="number" id="numeroOpciones" oninput="nopciones()" class="form-control" aria-valuemax="">
-        </div>
-        <div id="contenedorOpciones"></div>
-              
-        <div class="mb-3" id="contenedor">
-                    
-        </div>
-
-        <div class="mb-3">
-          <label for="retroalimentacion" class="form-label">Retroalimentacion</label>
-          <input type="text" class="form-control" id="retroalimentacion">
-        </div>
-    </div>
-    
-    
-    `
-  const inputs = document.querySelectorAll("#preguntas-screen input");
-
-  inputs.forEach(i => i.addEventListener("input", guardarEnTiempoReal));
-
-
-
-}
-
-function guardarEnTiempoReal() {
-  let numeroOpciones = parseInt(document.getElementById("numeroOpciones").value) || 0;
-
-  memoria_preguntas[numero_de_pregunta - 1] = {
-    pregunta: document.getElementById(`pregunta_${numero_de_pregunta}`).value.trim(),
-    opciones: [],
-    respuesta: document.getElementById("opcionCorrecta")?.value || "",
-    retroalimentacion: document.getElementById("retroalimentacion").value.trim(),
-    numero_de_pregunta: numero_de_pregunta
-  };
-
-  for (let n = 1; n <= numeroOpciones; n++) {
-    memoria_preguntas[numero_de_pregunta - 1].opciones.push(
-      document.getElementById(`${n}`).value.trim()
-    );
+    btn.disabled = true;
   }
-
-  console.log("💾 AUTO-GUARDADO:", memoria_preguntas[numero_de_pregunta - 1]);
 }
-
-
-
-
-
 
 function almacenar_preguntas() {
+  // Ocultar panel numero, mostrar editor
+  document.getElementById("card_body_numero").style.display = "none";
+  document.getElementById("card_editor").style.display = "block";
+  document.getElementById("panel_mini_cards").style.display = "block";
+  document.getElementById("panel_final").style.display = "block"; 
 
-  document.getElementById('card_body').style.display = "block"
-
-  n_preguntas.disabled = true
-  boton_generador_preguntas.disabled = true
-  memoria_preguntas = [];
-
-  generar_preguntas(numero_de_pregunta);
-
-
-  console.log("Estas en la pregunta : " + numero_de_pregunta)
-
-  document.getElementById("siguiente").addEventListener("click", () => {
-    pintar_card_preguntas(document.getElementById("siguiente"))
-  });
-
-  document.getElementById("anterior").addEventListener("click", () => {
-    pintar_card_preguntas(document.getElementById("anterior"))
-  });
-
-
-  actualizarBotones();
-
-
-
-}
-
-
-
-function pintar_card_preguntas(boton) {
-
-  if (boton.id === "siguiente") {
-    siguiente();
-  } else if (boton.id === "anterior") {
-    regresar();
-  }
-  actualizarBotones();
-}
-
-
-// Funciones de botones del panel de ubicacion espacial
-
-function siguiente() {
-
-  numero_de_pregunta++;
-  generar_preguntas(numero_de_pregunta);
-
-  // Cargar datos si ya existen
-  if (memoria_preguntas[numero_de_pregunta - 1]) {
-    let datos = memoria_preguntas[numero_de_pregunta - 1];
-
-    document.getElementById(`pregunta_${numero_de_pregunta}`).value = datos.pregunta;
-    document.getElementById("numeroOpciones").value = datos.opciones.length;
-
-    nopciones();
-
-    setTimeout(() => {
-      datos.opciones.forEach((op, i) => {
-        document.getElementById(`${i + 1}`).value = op;
+  // Inicializar memoria vacía basada en el numero
+  for(let i=0; i<parseInt(n_preguntas.value); i++){
+      memoria_preguntas.push({
+          pregunta: "",
+          opciones: [],
+          respuesta: "",
+          retroalimentacion: "",
+          numero_de_pregunta: i + 1
       });
-
-      // Mover estos DENTRO del setTimeout
-      document.getElementById("opcionCorrecta").value = datos.respuesta;
-      document.getElementById("retroalimentacion").value = datos.retroalimentacion;
-    }, 0);
-
   }
-}
-
-
-
-function regresar() {
-
-  if (numero_de_pregunta <= 1) {
-    mostrarToast("No hay preguntas anteriores");
-    return;
-  }
-
-  numero_de_pregunta--;
-
-  let datos = memoria_preguntas[numero_de_pregunta - 1];
-
+/* Logic by viper */
   generar_preguntas(numero_de_pregunta);
-
-  document.getElementById(`pregunta_${numero_de_pregunta}`).value = datos.pregunta;
-  document.getElementById("numeroOpciones").value = datos.opciones.length;
-
-  nopciones();
-
-  setTimeout(() => {
-    datos.opciones.forEach((op, i) => {
-      document.getElementById(`${i + 1}`).value = op;
-    });
-
-    // Mover estos dentro del setTimeout
-    document.getElementById("opcionCorrecta").value = datos.respuesta;
-    document.getElementById("retroalimentacion").value = datos.retroalimentacion;
-  }, 0);
-  console.log("⬅ Volviste a la pregunta:", numero_de_pregunta);
+  actualizarBotones();
+  renderizarMiniCards(); // Mostrar cards vacias al inicio
+  generar_quiz(); // Generar el quiz por primera vez
 }
 
+/* ============================================= */
+/* Lógica del Editor (Generar HTML)        */
+/* ============================================ */
 
+function generar_preguntas(ndp) {
 
+  cargando_pantalla = true;
 
-
-function guardar(ndp) {
-
-  let numeroOpciones = parseInt(document.getElementById("numeroOpciones").value) || 0;
-  let opcionCorrecta = document.getElementById("opcionCorrecta");
-
-  // Crea o actualiza la pregunta
-  memoria_preguntas[ndp - 1] = {
-    pregunta: document.getElementById(`pregunta_${ndp}`).value,
-    opciones: [],
-    respuesta: opcionCorrecta ? opcionCorrecta.value : "",
-    retroalimentacion: document.getElementById("retroalimentacion").value,
-    numero_de_pregunta: ndp,
-  };
-
-  // Guardar opciones
-  for (let n = 1; n <= numeroOpciones; n++) {
-    memoria_preguntas[ndp - 1].opciones.push(
-      document.getElementById(`${n}`).value
-    );
-  }
-
-  console.log("✅ Pregunta guardada:", memoria_preguntas[ndp - 1]);
-}
-
-
-
-
-
-
-
-
-function on_nopciones() {
-  let screen_option = document.getElementById("contenedor");
-
-  screen_option.style.display = "block"
-
-  screen_option.innerHTML = `
-    <label for="opcionCorrecta" class="form-label">No. Opcion Correcta</label>
-    <input type="number" oninput="max_options()" onblur="max_options()" class="form-control" id="opcionCorrecta" min="1">
-  `
-}
-
-let btns_container = document.getElementById("btns_container");
-let btn_quiz = document.getElementById("boton_quiz");
-
-
-function actualizar() {
-
-  if (numero_de_pregunta == (n_preguntas.value - 1)) {
-
-    numero_de_pregunta++
-    document.getElementById("siguiente").style.display = "none"
-    btn_quiz.style.display = "block"
-
-  } else {
-
-    if (numero_de_pregunta >= parseInt(n_preguntas.value)) {
-      console.log("Se han generado todas las preguntas")
-
-    } else {
-      numero_de_pregunta++
-      generar_preguntas(numero_de_pregunta)
-
-    }
-
-  }
-
-
-
-}
-
-
-//manejo de inputs  
-
-function limpiar_inputs() {
-  document.querySelectorAll("#preguntas-screen input")
-    .forEach(input => input.value = "");
-}
-
-
-
-
-function generar_quiz() {
-  pantalla.style.opacity = "1"
-  let letras = ["A","B","C","D"]
-  let html = "";
-
-  for (let x = 0; x < n_preguntas.value; x++) {
-    let datos = memoria_preguntas[x];
-
-    html += `
-      <div style="margin: 30px 0; padding: 20px; border-bottom: 1px solid #ddd;">
-        
-        <h5> <b> ${datos.numero_de_pregunta}. ${datos.pregunta} </b> </h5>
-        
-        <div style="margin: 15px 0;">
-          ${datos.opciones.map((op, i) => `<p> <b>${letras[i]}</b>.  ${op}</p>`).join('')}
+  // Limpiamos pantalla
+  pantalla_preguntas.innerHTML = `
+    <div name="pregunta${ndp}">
+        <div class="mb-3" style="border-bottom: 2px solid #30363d; padding-bottom: 20px;">
+          <h3 class="mt-3"> Pregunta ${ndp} </h3>
+          <label>Pregunta?</label>
+          <input type="text" class="form-control" id="input_pregunta" placeholder="Ingrese la pregunta" oninput="guardarEnTiempoReal(); validarBotonSiguiente()">
         </div>
         
-        <p style="color: #e2e2e2ff;   background-color: rgba(8, 173, 8, 0.36);   padding: 10px;   border-radius: 10px;">Respuesta: <br>  <strong> ${letras[datos.respuesta-1]}. ${datos.opciones[datos.respuesta-1]} </strong> </p>
-        <p style="color: #e2e2e2ff ; background-color: rgba(80, 39, 177, 0.36); padding: 10px; border: 2px solid rgba(114, 72, 228, 0.81) "> <b> Retroalimentacion: </b> <br>${datos.retroalimentacion}</p>
+        <div class="mb-3">
+          <label>Numero de Opciones <span>(max 4)</span></label>
+          <input type="number" id="numeroOpciones" class="form-control" oninput="nopciones(); validarBotonSiguiente()">
+        </div>
         
-      </div>
-    `;
-  }
+        <div id="contenedorOpciones" style="   justify-content: center;   display: flex;   align-items: center;   flex-direction: column; "></div>
+              
+        <div class="mb-3" id="contenedor_respuesta_correcta" style="display:none">
+             <label>No. Opcion Correcta</label>
+             <input type="number" class="form-control" id="opcionCorrecta" min="1" oninput="guardarEnTiempoReal(); validarBotonSiguiente()">       
+        </div>
 
-  pantalla.innerHTML = `
-    <h1 style="text-align: center; margin: 40px 0;">Quiz (preview)</h1>
-    ${html}
+        <div class="mb-3">
+          <label>Retroalimentacion</label>
+          <input type="text" class="form-control" id="retroalimentacion" oninput="guardarEnTiempoReal()">
+        </div>
+    </div>
   `;
+    cargarDatosEnInputs(ndp);
+    setTimeout(() => {
+        validarBotonSiguiente();
+        cargando_pantalla = false; // ← ya se puede guardar
+    }, 50);
 }
 
 
+// Función que llena los inputs si ya hay info en memoria
+function cargarDatosEnInputs(ndp) {
+    let datos = memoria_preguntas[ndp - 1];
+    if (!datos) return;
+
+    // 1. Cargar Pregunta
+    document.getElementById("input_pregunta").value = datos.pregunta || "";
+    document.getElementById("retroalimentacion").value = datos.retroalimentacion || "";
+
+    // 2. Cargar # Opciones y generarlas
+    if (datos.opciones.length > 0 || datos.numeroOpciones) {
+        let numOpciones = datos.numeroOpciones || datos.opciones.length;
+        document.getElementById("numeroOpciones").value = numOpciones;
+        nopciones(); // Esto genera los inputs de opciones
+
+        // 3. Llenar los textos de las opciones
+        setTimeout(() => { // Pequeño delay para asegurar que el DOM existe
+            datos.opciones.forEach((texto, i) => {
+                let inputOp = document.getElementById(`opcion_${i + 1}`);
+                if (inputOp) inputOp.value = texto;
+            });
+            
+            // 4. Cargar respuesta correcta DESPUÉS de generar las opciones
+            if (datos.respuesta) {
+                let inputRespuesta = document.getElementById("opcionCorrecta");
+                if (inputRespuesta) {
+                    inputRespuesta.value = datos.respuesta;
+                }
+            }
+            
+            validarBotonSiguiente(); // Validar después de cargar opciones
+        }, 0);
+    }
+}
+
+// Función nopciones adaptada para diseño vertical y ancho reducido
+function nopciones() {
+    let numeroOpciones = document.getElementById("numeroOpciones");
+    let contenedor = document.getElementById("contenedorOpciones");
+    let val = parseInt(numeroOpciones.value);
+    let cajas = '';
+
+    if (val > 4) {
+        mostrarToast("Maximo 4 opciones");
+        numeroOpciones.value = 4;
+        val = 4;
+    }
+
+    // Primero guardar valores actuales antes de regenerar
+    let valoresActuales = [];
+    let respuestaCorrectaActual = "";
+    
+    for (let i = 1; i <= 4; i++) {
+        let input = document.getElementById(`opcion_${i}`);
+        if (input) {
+            valoresActuales.push(input.value);
+        }
+    }
+    
+    // Guardar respuesta correcta actual si existe
+    let inputRespuestaActual = document.getElementById("opcionCorrecta");
+    if (inputRespuestaActual) {
+        respuestaCorrectaActual = inputRespuestaActual.value;
+    }
+
+    // Obtener valores de la memoria si existen
+    let ndp = numero_de_pregunta;
+    let datosMemoria = memoria_preguntas[ndp - 1];
+
+    cajas += '<div class="row">'; 
+
+    if (val > 0) {
+        for (let n = 1; n <= val; n++) {
+            // Prioridad: 1. Valor actual del input, 2. Valor en memoria, 3. Vacío
+            let valorActual = "";
+            if (valoresActuales[n - 1] !== undefined && valoresActuales[n - 1] !== "") {
+                valorActual = valoresActuales[n - 1];
+            } else if (datosMemoria && datosMemoria.opciones[n - 1]) {
+                valorActual = datosMemoria.opciones[n - 1];
+            }
+            
+            // col-md-6 reduce el ancho y col-12 asegura apilamiento vertical
+            cajas += `
+            <div class="mb-3 col-12"> 
+                <label>Opcion ${n}</label>
+                <input type="text" class="form-control opcion-input" id="opcion_${n}" value="${valorActual}" 
+                       oninput="guardarEnTiempoReal(); validarBotonSiguiente()">
+            </div> 
+            `;
+        }
+        document.getElementById("contenedor_respuesta_correcta").style.display = "block";
+    } else {
+        document.getElementById("contenedor_respuesta_correcta").style.display = "none";
+    }
+    
+    cajas += '</div>';
+
+    contenedor.innerHTML = cajas;
+    
+    // Restaurar la respuesta correcta después de regenerar el DOM
+    setTimeout(() => {
+        let inputRespuesta = document.getElementById("opcionCorrecta");
+        if (inputRespuesta) {
+            // Prioridad: valor actual guardado, sino el de memoria
+            if (respuestaCorrectaActual) {
+                inputRespuesta.value = respuestaCorrectaActual;
+            } else if (datosMemoria && datosMemoria.respuesta) {
+                inputRespuesta.value = datosMemoria.respuesta;
+            }
+        }
+    }, 0);
+    
+    guardarEnTiempoReal();
+    validarBotonSiguiente(); // Validar inmediatamente después de generar los inputs
+}
+
+// Función de Validación
+function validarBotonSiguiente() {
+    let pregunta = document.getElementById("input_pregunta") ? document.getElementById("input_pregunta").value : "";
+    let correcta = document.getElementById("opcionCorrecta") ? document.getElementById("opcionCorrecta").value : "";
+    let numOpciones = document.getElementById("numeroOpciones") ? parseInt(document.getElementById("numeroOpciones").value) : 0;
+    
+    let inputsOpciones = document.querySelectorAll(".opcion-input");
+    let opcionesLlenas = true;
+    
+    // 1. Verificar que todas las opciones requeridas estén llenas
+    if (inputsOpciones.length !== numOpciones) {
+        opcionesLlenas = false; 
+    } else {
+        inputsOpciones.forEach(inp => {
+            if (inp.value.trim() === "") {
+                opcionesLlenas = false;
+            }
+        });
+    }
+
+    // 2. Verificar que la respuesta correcta sea un número válido
+    let respuestaValida = (correcta.trim() !== "" && parseInt(correcta) >= 1 && parseInt(correcta) <= numOpciones);
+    
+    // Toast si la respuesta correcta excede el número de opciones
+    if (correcta.trim() !== "" && parseInt(correcta) > numOpciones && numOpciones > 0) {
+        mostrarToast("La opcion correcta no puede exceder el numero de opciones");
+    }
+    
+    // 3. Chequeo final
+    let todoLleno = pregunta.trim() !== "" && opcionesLlenas && respuestaValida;
+
+    let btnSiguiente = document.getElementById("siguiente");
+    let btnFinalizar = document.getElementById("boton_finalizar");
+    
+    if (btnSiguiente && btnFinalizar) {
+        // Deshabilitar/Habilitar botón que esté visible en la navegación
+        if (btnSiguiente.style.display !== "none") {
+            btnSiguiente.disabled = !todoLleno;
+        } else if (btnFinalizar.style.display !== "none") {
+            btnFinalizar.disabled = !todoLleno;
+        }
+    }
+}
 
 
+/* ============================================= */
+/* Guardado en Tiempo Real y Mini Cards       */
+/* ============================================ */
 
+// Escucha CUALQUIER cambio en el formulario para guardar y actualizar preview
+pantalla_preguntas.addEventListener('input', function(e) {
+    if (cargando_pantalla) return;  // ← No guardar durante regeneración
+
+    guardarEnTiempoReal();
+    validarBotonSiguiente();
+});
+/* Logic by viper */
+
+function guardarEnTiempoReal() {
+    if (cargando_pantalla) return; 
+    let ndp = numero_de_pregunta;
+    let preguntaTxt = document.getElementById("input_pregunta") ? document.getElementById("input_pregunta").value : "";
+    let retro = document.getElementById("retroalimentacion") ? document.getElementById("retroalimentacion").value : "";
+    let resp = document.getElementById("opcionCorrecta") ? document.getElementById("opcionCorrecta").value : "";
+    let numOpciones = document.getElementById("numeroOpciones") ? document.getElementById("numeroOpciones").value : "";
+    
+    // Recolectar opciones
+    let arrayOpciones = [];
+    let inputsOpciones = document.querySelectorAll(".opcion-input");
+    inputsOpciones.forEach(inp => arrayOpciones.push(inp.value));
+
+    // Si el array existe (para evitar errores en la carga inicial)
+    if(memoria_preguntas[ndp - 1]){
+        memoria_preguntas[ndp - 1] = {
+            pregunta: preguntaTxt,
+            opciones: arrayOpciones,
+            respuesta: resp,
+            retroalimentacion: retro,
+            numero_de_pregunta: ndp,
+            numeroOpciones: numOpciones // Guardar también el número de opciones
+        };
+    }
+
+
+    renderizarMiniCards();
+    generar_quiz(); // Renderiza el quiz en vivo
+}
+
+function renderizarMiniCards() {
+    let html = "";
+    memoria_preguntas.forEach((item, index) => {
+        let activeClass = (index + 1 === numero_de_pregunta) ? "border-primary" : "border-secondary";
+        // Si estamos en modo edición final, las cards son clickeables
+        let clickAction = modo_edicion_final ? `onclick="editarPreguntaEspecifica(${index + 1})"` : "";
+        let cursorStyle = modo_edicion_final ? "cursor: pointer;" : "";
+        let bgStyle = modo_edicion_final && (index + 1 === numero_de_pregunta) ? "background-color: #21262d;" : "background-color: #161b22;";
+
+        html += `
+        <div class="col-6 col-md-3 mb-2">
+            <div class="card p-2 ${activeClass}" style="${cursorStyle} ${bgStyle} min-height: 100px;" ${clickAction}>
+                <small style="color: #58a6ff; font-weight: bold;">P${index + 1}</small>
+                <p style="font-size: 0.8rem; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                    ${item.pregunta || "Sin pregunta..."}
+                </p>
+                <small style="color: #8b949e">${item.opciones.length} opciones</small>
+            </div>
+        </div>`;
+    });
+    contenedor_mini_cards.innerHTML = html;
+}
+/* Logic by viper */
+/* ============================================= */
+/* Navegación (Anterior / Siguiente)       */
+/* ============================================ */
+
+function pintar_card_preguntas(accion) {
+  if (accion === 'siguiente') {
+      numero_de_pregunta++;
+  } else {
+      numero_de_pregunta--;
+  }
+  
+  generar_preguntas(numero_de_pregunta);
+  actualizarBotones();
+  renderizarMiniCards(); // Actualizar el borde activo
+}
+
+function actualizarBotones() {
+  let total = parseInt(n_preguntas.value);
+  
+  // Boton Anterior
+  document.getElementById("anterior").style.display = (numero_de_pregunta === 1) ? "none" : "block";
+  
+  // Boton Siguiente / Finalizar
+  let btnSiguiente = document.getElementById("siguiente");
+  let btnFinalizar = document.getElementById("boton_finalizar");
+
+  if (numero_de_pregunta === total) {
+      btnSiguiente.style.display = "none";
+      btnFinalizar.style.display = "block";
+  } else {
+      btnSiguiente.style.display = "block";
+      btnFinalizar.style.display = "none";
+  }
+}
+
+/* ============================================= */
+/* Fase Final y Generación de Quiz         */
+/* ============================================ */
+
+function finalizar_carga() {
+    modo_edicion_final = true;
+    
+    // Ocultar el editor principal
+    document.getElementById("card_editor").style.display = "none";
+    
+    document.getElementById("panel_final").style.display = "block"; 
+    
+    mostrarToast("Carga finalizada. Haz clic en una tarjeta para editarla.");
+    renderizarMiniCards(); 
+    generar_quiz(); 
+}
+/* Logic by viper */
+function editarPreguntaEspecifica(ndp) {
+    numero_de_pregunta = ndp;
+    
+    // Crear modal de edición
+    crearModalEdicion(ndp);
+}
+
+function crearModalEdicion(ndp) {
+    // Eliminar modal anterior si existe
+    let modalAnterior = document.getElementById("modal_edicion");
+    if (modalAnterior) {
+        modalAnterior.remove();
+    }
+
+    // Crear el modal
+    let modalHTML = `
+    <div id="modal_edicion" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.8); z-index: 9999; display: flex; justify-content: center; align-items: center; overflow-y: auto;">
+        <div class="card" style="width: 90%; max-width: 600px; margin: 20px; max-height: 90vh; overflow-y: auto;">
+            <div class="card-body">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h4><b>Editar Pregunta ${ndp}</b></h4>
+                    <button class="btn btn-danger btn-sm" onclick="cerrarModalEdicion()">✕ Cerrar</button>
+                </div>
+                
+                <div id="contenido_modal_edicion"></div>
+                
+                <button class="btn btn-success w-100 mt-3" onclick="guardarEdicionModal()">Guardar Cambios</button>
+            </div>
+        </div>
+    </div>
+    `;
+
+    document.body.insertAdjacentHTML('beforeend', modalHTML);
+
+    // Cargar el contenido del editor en el modal
+    let contenidoModal = document.getElementById("contenido_modal_edicion");
+    let datos = memoria_preguntas[ndp - 1];
+
+    contenidoModal.innerHTML = `
+        <div class="mb-3" style="border-bottom: 2px solid #30363d; padding-bottom: 20px;">
+            <label>Pregunta?</label>
+            <input type="text" class="form-control" id="modal_input_pregunta" placeholder="Ingrese la pregunta" value="${datos.pregunta || ''}">
+        </div>
+        
+        <div class="mb-3">
+            <label>Numero de Opciones <span>(max 4)</span></label>
+            <input type="number" id="modal_numeroOpciones" class="form-control" value="${datos.opciones.length || ''}">
+        </div>
+        
+        <div id="modal_contenedorOpciones" style="justify-content: center; display: flex; align-items: center; flex-direction: column;"></div>
+              
+        <div class="mb-3" id="modal_contenedor_respuesta_correcta" style="display:none">
+             <label>No. Opcion Correcta</label>
+             <input type="number" class="form-control" id="modal_opcionCorrecta" min="1" value="${datos.respuesta || ''}">       
+        </div>
+
+        <div class="mb-3">
+            <label>Retroalimentacion</label>
+            <input type="text" class="form-control" id="modal_retroalimentacion" value="${datos.retroalimentacion || ''}">
+        </div>
+    `;
+
+    // Generar las opciones si existen
+    if (datos.opciones.length > 0) {
+        generarOpcionesModal(datos.opciones);
+    }
+
+    // Event listener para el cambio en número de opciones
+    document.getElementById("modal_numeroOpciones").addEventListener('input', function() {
+        let val = parseInt(this.value);
+        if (val > 4) {
+            mostrarToast("Maximo 4 opciones");
+            this.value = 4;
+            val = 4;
+        }
+        generarOpcionesModalDinamico(val);
+    });
+}
+
+function generarOpcionesModal(opcionesExistentes) {
+    let contenedor = document.getElementById("modal_contenedorOpciones");
+    let html = '<div class="row">';
+
+    opcionesExistentes.forEach((texto, i) => {
+        html += `
+        <div class="mb-3 col-12">
+            <label>Opcion ${i + 1}</label>
+            <input type="text" class="form-control modal-opcion-input" id="modal_opcion_${i + 1}" value="${texto}">
+        </div>
+        `;
+    });
+
+    html += '</div>';
+    contenedor.innerHTML = html;
+    document.getElementById("modal_contenedor_respuesta_correcta").style.display = "block";
+}
+
+function generarOpcionesModalDinamico(numOpciones) {
+    let contenedor = document.getElementById("modal_contenedorOpciones");
+    let html = '<div class="row">';
+
+    // Guardar valores actuales antes de regenerar
+    let valoresActuales = [];
+    for (let i = 1; i <= 4; i++) {
+        let input = document.getElementById(`modal_opcion_${i}`);
+        if (input) {
+            valoresActuales.push(input.value);
+        }
+    }
+
+    if (numOpciones > 0) {
+        for (let n = 1; n <= numOpciones; n++) {
+            let valorActual = valoresActuales[n - 1] || "";
+            html += `
+            <div class="mb-3 col-12">
+                <label>Opcion ${n}</label>
+                <input type="text" class="form-control modal-opcion-input" id="modal_opcion_${n}" value="${valorActual}">
+            </div>
+            `;
+        }
+        document.getElementById("modal_contenedor_respuesta_correcta").style.display = "block";
+    } else {
+        document.getElementById("modal_contenedor_respuesta_correcta").style.display = "none";
+    }
+
+    html += '</div>';
+    contenedor.innerHTML = html;
+}
+
+function guardarEdicionModal() {
+    let ndp = numero_de_pregunta;
+    let preguntaTxt = document.getElementById("modal_input_pregunta").value;
+    let retro = document.getElementById("modal_retroalimentacion").value;
+    let resp = document.getElementById("modal_opcionCorrecta").value;
+    
+    // Recolectar opciones
+    let arrayOpciones = [];
+    let inputsOpciones = document.querySelectorAll(".modal-opcion-input");
+    inputsOpciones.forEach(inp => arrayOpciones.push(inp.value));
+
+    // Guardar en memoria
+    memoria_preguntas[ndp - 1] = {
+        pregunta: preguntaTxt,
+        opciones: arrayOpciones,
+        respuesta: resp,
+        retroalimentacion: retro,
+        numero_de_pregunta: ndp
+    };
+
+    renderizarMiniCards();
+    generar_quiz();
+    cerrarModalEdicion();
+    mostrarToast("Cambios guardados exitosamente");
+}
+
+function cerrarModalEdicion() {
+    let modal = document.getElementById("modal_edicion");
+    if (modal) {
+        modal.remove();
+    }
+}
+
+function generar_quiz() {
+  
+  let pantalla = document.getElementById("pregunta_pantalla");
+  pantalla.style.display = "block"; 
+  
+  let html = `<h3 class="text-center mb-4">Quiz Interactivo (Preview en Vivo)</h3>`;
+  let letras = ["A","B","C","D"];
+
+  memoria_preguntas.forEach((datos, idx) => {
+    html += `
+      <div class="card mb-4 p-3 quiz-card" data-index="${idx}" style="border: 1px solid #30363d;">
+        <h5><b>${datos.numero_de_pregunta}. ${datos.pregunta || "⚠️ PREGUNTA VACÍA (Editar)"}</b></h5>
+        <div class="mt-3">
+          ${datos.opciones.map((op, i) => 
+            `<button class="btn btn-outline-light w-100 mb-2 text-start" 
+              onclick="verificarRespuesta(this, ${i+1}, ${datos.respuesta}, 'retro_${idx}')">
+              <b>${letras[i]}.</b> ${op || "⚠️ Opción Vacía"}
+             </button>`
+          ).join('')}
+        </div>
+        
+        <div id="retro_${idx}" 
+             style="display:none; margin-top:10px; padding:10px; border-radius:5px; background-color: #2c3034; border: 1px solid #6c757d;">
+           <p style="color: #9a4cff; margin: 0;">
+               <b>Retroalimentación:</b> ${datos.retroalimentacion || "Sin retroalimentación."}
+           </p>
+        </div>
+      </div>
+    `;
+  });
+
+  pantalla.innerHTML = html;
+}
+
+// Logica del juego en vivo (Validación visual)
+function verificarRespuesta(btn, opcionElegida, correcta, idRetro) {
+    let quizCard = btn.closest('.quiz-card');
+    let buttons = quizCard.querySelectorAll('button');
+    buttons.forEach(b => b.disabled = true); // Deshabilita todos los botones de la pregunta
+
+    let retroDiv = document.getElementById(idRetro);
+    retroDiv.style.display = "block";
+    
+    if (opcionElegida == correcta) {
+        btn.classList.remove("btn-outline-light");
+        btn.classList.add("btn-success");
+        retroDiv.style.backgroundColor = "rgba(25, 135, 84, 0.2)";
+        retroDiv.style.border = "1px solid #198754";
+    } else {
+        btn.classList.remove("btn-outline-light");
+        btn.classList.add("btn-danger");
+        retroDiv.style.backgroundColor = "rgba(220, 53, 69, 0.2)";
+        retroDiv.style.border = "1px solid #dc3545";
+
+        // Muestra la respuesta correcta si la incorrecta fue elegida
+        buttons.forEach((b, i) => {
+            if (i + 1 == correcta) {
+                b.classList.remove("btn-outline-light");
+                b.classList.add("btn-info"); // Color diferente para la correcta
+            }
+        });
+    }
+}
+
+// Utilidad Toast
+function mostrarToast(mensaje) {
+  let toaster = document.getElementById("salida_toaster");
+  toaster.innerHTML = `
+   <div class="toast-container position-fixed bottom-0 start-50 translate-middle-x p-3">
+      <div class="toast show text-white bg-danger border-0">
+        <div class="toast-body">${mensaje}</div>
+      </div>
+    </div>`;
+  setTimeout(() => { toaster.innerHTML = ""; }, 3000);
+}
+
+
+/* Logic by viper */

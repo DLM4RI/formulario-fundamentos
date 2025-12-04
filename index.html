@@ -4,126 +4,65 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
+  <title>Generador de Quiz</title>
   <link href='https://cdn.boxicons.com/fonts/basic/boxicons.min.css' rel='stylesheet'>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
-  integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 
 <body id="screen" class="container col-12">
   <div class="row d-flex justify-content-center">
     <div class="col-12 col-md-10 col-lg-8">
+      
       <div class="card mt-5">
         <div>
-          <h2 class="card-header text-center" id="card_header" style="margin: 10px;"><b>Generador de Quizes</b></h3>
+          <h2 class="card-header text-center" id="card_header"><b>Generador de Quizes</b></h2>
         </div>
 
-        <!-- Card donde se ingresa el numero de preguntas -->
         <div class="card-body" id="card_body_numero">
-          <h5 class=""> Generador de Preguntas</h5>
+          <h5>Generador de Preguntas</h5>
           <div class="mb-3">
-            <label for="n_preguntas" >Numero de Preguntas <span>(max 20)</span>   </label>
+            <label for="n_preguntas">Numero de Preguntas <span>(max 20)</span></label>
             <input type="number" class="form-control" id="n_preguntas" placeholder="Ingrese # de preguntas" oninput="validar_pregunta()">
           </div>
-            <button type="submit" class="btn btn-success w-100" onclick="almacenar_preguntas()" id="boton_generador_preguntas" disabled>Generar</button>
+          <button type="submit" class="btn btn-success w-100" onclick="almacenar_preguntas()" id="boton_generador_preguntas" disabled>Generar</button>
         </div>
-
       </div>
 
-
-      <!-- Card donde se genraran las preguntas -->
-
-      <div class="card-body" id="card_body">
-        <div style="text-align: center;"">
-            <h4 class="card-title"><b>Editor de Preguntas</b></h5>
-        </div>
-        
-          <div id="preguntas-screen">
-              
-
-            
-            
-          </div> 
-
-          <div id="btns_container">
-            <button type="submit" class="btn btn-warning w-30" onclick="pintar_card_preguntas('anterior')" id="anterior">Anterior</button>
-            <button type="submit" class="btn btn-primary w-30" onclick="pintar_card_preguntas('siguiente')" id="siguiente">siguiente</button>
-            <button type="submit" class="btn btn-danger w-30" id="boton_quiz" onclick="generar_quiz()">Generar Quiz</button>
+      <div class="card mt-3" id="card_editor" style="display: none;">
+        <div class="card-body">
+          <div style="text-align: center;">
+            <h4 class="card-title"><b>Editor de Preguntas</b></h4>
           </div>
-      </div>  
+
+          <div id="preguntas-screen"></div> 
+
+          <div id="btns_container" class="mt-3 d-flex justify-content-between">
+            <button class="btn btn-warning w-30" onclick="pintar_card_preguntas('anterior')" id="anterior">Anterior</button>
+            <button class="btn btn-primary w-30" onclick="pintar_card_preguntas('siguiente')" id="siguiente">Siguiente</button>
+            <button class="btn btn-danger w-30" id="boton_finalizar" style="display: none;" onclick="finalizar_carga()">Finalizar Carga</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="panel_mini_cards" class="mt-4" style="display: none;">
+         <h5 class="text-white text-center mb-3">Progreso (Mini Cards)</h5>
+         <div id="contenedor_mini_cards" class="row d-flex justify-content-center">
+            </div>
+      </div>
+
+      <div id="panel_final" class="mt-4 text-center" style="display: none;">
+         <button class="btn btn-danger btn-lg w-100" onclick="generar_quiz()">RE-GENERAR / VER QUIZ</button>
+      </div>
+
+      <div id="pregunta_pantalla" class="container card mt-5 mb-5 p-3" style="display: none;"></div>
+
     </div>
   </div>
 
+  <div id="salida_toaster"></div>
 
-
-  <!-- Lugar donde se generara el quiz -->
-
-  <div id="pregunta_pantalla" class="container card mt-3 d-flex flex-column p-3 mt-5"></div>
-
-    
-  </div>
-
-
-
-
-
-  <!-- Toaster -->
-
-<div id="salida_toaster"> 
-
-</div>
-  
-
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
-    integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
-    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
   <script src="pregunta.js"></script>
-
-
-
-
-  <!-- 
-  
-    INTEGRANTES :
-
-    ROSENDO DE CASTRO
-    MARIO CASTRO
-    KIARA CORENA
-    ANDREA HERNANDEZ
-  
-  -->
-
-
-
-
-
-
-
-
-
-
-
-
-  <!-- 
-  
-              (
-               )
-              (
-        /\  .-"""-.  /\
-       //\\/  ,,,  \//\\
-       |/\| ,;;;;;, |/\|
-       //\\\;-"""-;///\\
-      //  \/   .   \/  \\
-     (| ,-_| \ | / |_-, |)
-       //`__\.-.-./__`\\
-      // /.-(() ())-.\ \\
-     (\ |)   '---'   (| /)
-      ` (|           |) `
-        \)           (/
-        code by : viper
-  -->
-
-
 </body>
 </html>
